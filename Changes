@@ -1,0 +1,69 @@
+==================================================
+Changes from 2011-04-19 00:00:00 +0000 to present.
+==================================================
+
+-----------------------------------------
+version 0.01 at 2012-04-18 15:35:59 +0000
+-----------------------------------------
+
+  Change: 66ca644e43e5bf3812d5fedeaf8bc254f123a888
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 17:35:48 +0000
+
+    Raw.pm: add experimental code notice 
+
+  Change: 4c785c6c9c517b9a792607dd6437c3c7c07c7667
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 17:33:16 +0000
+
+    eg: add libnotify example 
+
+  Change: 82f23c0a4713e70cef6a20b0119f4335357fed33
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 16:58:21 +0000
+
+    Raw.xs: initial support for Windows 
+
+  Change: 5f89f6915fc4aa30137f48b871e2265621af62e3
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 15:57:30 +0000
+
+    Raw.xs: remopve duplicated code 
+
+  Change: 13c2bde70c6bf42812880b1de8b46d0257e02a8f
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 15:21:35 +0000
+
+    string.pl: fix strstr example 
+
+  Change: 2bccb7af669e0c844a3290dc7f2a6472d20ff8ac
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 14:47:17 +0000
+
+    various code and docs fixes + tests 
+
+  Change: 9a7319739afc39a1166a5817b4616901a2dbe180
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-18 11:34:40 +0000
+
+    add docs and few fixes 
+
+  Change: 05229b177ad857e830cb2cd71ae36139e2db8c52
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-17 23:57:20 +0000
+
+    initial commit 
+
+----------------------------------------
+version 0.0 at 2012-04-17 16:55:11 +0000
+----------------------------------------
+
+  Change: d9b02d1c482dfa894e6d2d77f53eb88bf43af4eb
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-17 18:55:11 +0000
+
+    initial commit 
+
+================
+End of releases.
+================
