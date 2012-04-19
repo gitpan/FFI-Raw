@@ -22,3 +22,4 @@ t/03-double.t
 t/release-check-manifest.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+typemap

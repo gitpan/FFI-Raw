@@ -40,13 +40,14 @@
       "bugtracker" : {
          "web" : "https://github.com/AlexBio/FFI-Raw/issues"
       },
+      "homepage" : "https://metacpan.org/release/FFI-Raw",
       "repository" : {
          "type" : "git",
          "url" : "git://github.com/AlexBio/FFI-Raw.git",
          "web" : "https://github.com/AlexBio/FFI-Raw"
       }
    },
-   "version" : 0.01,
+   "version" : "0.02",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -175,13 +176,13 @@
             "version" : "4.300014"
          },
          {
-            "class" : "Dist::Zilla::Plugin::Git::Tag",
-            "name" : "@Author::ALEXBIO/Git::Tag",
+            "class" : "Dist::Zilla::Plugin::Git::Push",
+            "name" : "@Author::ALEXBIO/Git::Push",
             "version" : "1.121010"
          },
          {
-            "class" : "Dist::Zilla::Plugin::Git::Push",
-            "name" : "@Author::ALEXBIO/Git::Push",
+            "class" : "Dist::Zilla::Plugin::Git::Tag",
+            "name" : "@Author::ALEXBIO/Git::Tag",
             "version" : "1.121010"
          },
          {

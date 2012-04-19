@@ -29,12 +29,14 @@ void *_ffi_raw_get_type(char type) {
 	switch (type) {
 		case 'v': return &ffi_type_void;
 		case 'i': return &ffi_type_sint32;
+		case 'I': return &ffi_type_uint32;
 		case 'c': return &ffi_type_sint8;
+		case 'C': return &ffi_type_uint8;
 		case 'f': return &ffi_type_float;
 		case 'd': return &ffi_type_double;
 		case 's':
 		case 'p': return &ffi_type_pointer;
-		default: Perl_croak(aTHX_ "invalid type");
+		default: Perl_croak(aTHX_ "Invalid type '%c'", type);
 	}
 }
 
@@ -42,7 +44,7 @@ void *_ffi_raw_get_type(char type) {
 
 MODULE = FFI::Raw					PACKAGE = FFI::Raw
 
-SV *
+FFI_Raw_t *
 _ffi_raw_new(class, library, function, ret_type, ...)
 	SV *class
 	SV *library
@@ -114,32 +116,26 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 		);
 
 		if (status != FFI_OK)
-			Perl_croak(aTHX_ "error creating calling interface");
+			Perl_croak(aTHX_ "Error creating calling interface");
 
 
-		RETVAL = sv_setref_pv(self, "FFI::Raw", ffi_raw);
+		RETVAL = ffi_raw;
 	OUTPUT:
 		RETVAL
 
 void
 _ffi_raw_destroy(self)
-	SV *self
+	FFI_Raw_t *self
 
-	INIT:
-		FFI_Raw_t *ffi_raw;
 	CODE:
-		if (sv_isobject(self) && sv_derived_from(self, "FFI::Raw"))
-			ffi_raw = INT2PTR(FFI_Raw_t *, SvIV((SV *) SvRV(self)));
-		else
-			Perl_croak(aTHX_ "$var is not of type FFI::Raw");
 #ifdef _WIN32
-		/*FreeLibrary(ffi_raw -> handle);*/
+		FreeLibrary(self -> handle);
 #else
-		/*dlclose(ffi_raw -> handle);*/
+		dlclose(self -> handle);
 #endif
-		free(ffi_raw -> args_types);
-		free(ffi_raw -> args);
-		free(ffi_raw);
+		free(self -> args_types);
+		free(self -> args);
+		free(self);
 
 #define PTR_TO_INT(ARG)				\
 	newSViv(PTR2IV(ARG))
@@ -154,36 +150,35 @@ _ffi_raw_destroy(self)
 
 #define FFI_CALL(TYPE, FN) {			\
 	TYPE result;				\
-	ffi_call(&ffi_raw -> cif, ffi_raw -> fn, &result, values);	\
+	ffi_call(&self -> cif, self -> fn, &result, values);	\
 	output = FN(result);			\
 	break;					\
 }
 
 SV *
 _ffi_raw_call(self, ...)
-	SV *self
+	FFI_Raw_t *self
 
 	INIT:
 		int i;
 		SV *output;
 		void **values;
-		FFI_Raw_t *ffi_raw;
 	CODE:
-		if (sv_isobject(self) && sv_derived_from(self, "FFI::Raw"))
-			ffi_raw = INT2PTR(FFI_Raw_t *, SvIV((SV *) SvRV(self)));
-		else
-			Perl_croak(aTHX_ "$var is not of type FFI::Raw");
+		if (self -> argc != (items - 1))
+			Perl_croak(aTHX_ "Wrong number of arguments");
 
-		values = malloc(sizeof(void *) * ffi_raw -> argc);
+		values = malloc(sizeof(void *) * self -> argc);
 
-		for (i = 0; i < ffi_raw -> argc; i++) {
+		for (i = 0; i < self -> argc; i++) {
 			STRLEN l;
 			SV *arg = ST(i + 1);
 
-			switch (ffi_raw -> args_types[i]) {
+			switch (self -> args_types[i]) {
 				case 'v': break;
 				case 'i': FFI_SET_ARG(int, SvIV)
+				case 'I': FFI_SET_ARG(int, SvUV)
 				case 'c': FFI_SET_ARG(char, SvIV)
+				case 'C': FFI_SET_ARG(int, SvUV)
 				case 'f': FFI_SET_ARG(float, SvNV)
 				case 'd': FFI_SET_ARG(double, SvNV)
 				case 's': {
@@ -202,10 +197,10 @@ _ffi_raw_call(self, ...)
 			}
 		}
 
-		switch (ffi_raw -> ret_type) {
+		switch (self -> ret_type) {
 			case 'v': {
 				ffi_call(
-					&ffi_raw -> cif, ffi_raw -> fn,
+					&self -> cif, self -> fn,
 					NULL, values
 				);
 
@@ -213,14 +208,16 @@ _ffi_raw_call(self, ...)
 				break;
 			}
 			case 'i': FFI_CALL(int, newSViv)
+			case 'I': FFI_CALL(int, newSVuv)
 			case 'c': FFI_CALL(char, newSViv)
+			case 'C': FFI_CALL(char, newSVuv)
 			case 'f': FFI_CALL(float, newSVnv)
 			case 'd': FFI_CALL(double, newSVnv)
 			case 's': {
 				char *result;
 
 				ffi_call(
-					&ffi_raw -> cif, ffi_raw -> fn,
+					&self -> cif, self -> fn,
 					&result, values
 				);
 

@@ -22,8 +22,9 @@ requires:
   warnings: 0
 resources:
   bugtracker: https://github.com/AlexBio/FFI-Raw/issues
+  homepage: https://metacpan.org/release/FFI-Raw
   repository: git://github.com/AlexBio/FFI-Raw.git
-version: 0.01
+version: 0.02
 x_Dist_Zilla:
   plugins:
     -
@@ -127,12 +128,12 @@ x_Dist_Zilla:
       name: '@Author::ALEXBIO/PodCoverageTests'
       version: 4.300014
     -
-      class: Dist::Zilla::Plugin::Git::Tag
-      name: '@Author::ALEXBIO/Git::Tag'
-      version: 1.121010
-    -
       class: Dist::Zilla::Plugin::Git::Push
       name: '@Author::ALEXBIO/Git::Push'
+      version: 1.121010
+    -
+      class: Dist::Zilla::Plugin::Git::Tag
+      name: '@Author::ALEXBIO/Git::Tag'
       version: 1.121010
     -
       class: Dist::Zilla::Plugin::UploadToCPAN
