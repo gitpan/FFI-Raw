@@ -10,11 +10,15 @@ Raw.xs
 dist.ini
 eg/getpid.pl
 eg/integer.pl
+eg/malloc.pl
 eg/math.pl
 eg/notify.pl
 eg/string.pl
+eg/zmq_client.pl
+eg/zmq_server.pl
 inc/MakeMaker.pm
 lib/FFI/Raw.pm
+lib/FFI/Raw/MemPtr.pm
 t/00-compile.t
 t/01-integer.t
 t/02-string.t

@@ -1,9 +1,61 @@
 ==================================================
-Changes from 2011-04-20 00:00:00 +0000 to present.
+Changes from 2011-04-27 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.02 at 2012-04-19 15:12:09 +0000
+version 0.03 at 2012-04-26 16:34:23 +0000
+-----------------------------------------
+
+  Change: 46fd67519e8f938221c9acc9e96791ed321f351f
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 18:32:44 +0000
+
+    *.pm: improve docs 
+
+  Change: 295c378776dcd8d85d8ffb4dc7cacb847aaea77d
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 18:23:58 +0000
+
+    eg: add zeromq examples 
+
+  Change: 99b4c911eb3ce664803eff5affdf12ff12c66978
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 17:36:59 +0000
+
+    malloc.pl: update example 
+
+  Change: 3a2221b206134488bc231fec3e24846f8365e6b6
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 17:36:25 +0000
+
+    Raw.pm: add memptr function 
+
+  Change: 182293e4ae67cc35a445aa56d3a8ca03dda0c7b0
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 17:36:25 +0000
+
+    MemPtr.pm: add FFI::Raw::MemPtr type 
+
+  Change: 8a8c8188d53d5ae30e70011ed9483c7279aacf68
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 17:36:20 +0000
+
+    Raw.xs: add raw ptr functions 
+
+  Change: 2d521bafed37299ab94901387599c85c7d40a2b3
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 11:31:45 +0000
+
+    Raw.xs: use perl's allocation macros 
+
+  Change: 4f5c31637097c69102028ba42838138ef31ca27c
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 11:01:27 +0000
+
+    03-double.t: fix test 
+
+-----------------------------------------
+version 0.02 at 2012-04-19 15:10:17 +0000
 -----------------------------------------
 
   Change: ed3b277c8fd3993e64813b7a7c92706840eb6baf

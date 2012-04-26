@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.02';
+  $FFI::Raw::VERSION = '0.03';
 }
 
 use strict;
@@ -9,13 +9,15 @@ use warnings;
 require XSLoader;
 XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
+use FFI::Raw::MemPtr;
+
 =head1 NAME
 
 FFI::Raw - Raw FFI library for Perl
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -64,6 +66,16 @@ must match the types passed to C<new>.
 =cut
 
 sub call { FFI::Raw::_ffi_raw_call(@_) }
+
+=head2 memptr( $number )
+
+Allocate C<$number> bytes and return a C<FFI::Raw::MemPtr> pointing to the
+allocated memory. This can be passed to functions which take a FFI::Raw::ptr
+argument.
+
+=cut
+
+sub memptr { FFI::Raw::MemPtr -> new(@_) }
 
 =head1 TYPES
 

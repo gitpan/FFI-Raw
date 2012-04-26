@@ -42,7 +42,7 @@ void *_ffi_raw_get_type(char type) {
 
 #define NEW_BASIC_ITEMS 3
 
-MODULE = FFI::Raw					PACKAGE = FFI::Raw
+MODULE = FFI::Raw				PACKAGE = FFI::Raw
 
 FFI_Raw_t *
 _ffi_raw_new(class, library, function, ret_type, ...)
@@ -62,9 +62,11 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 		STRLEN function_len;
 		const char *function_name;
 
+		FFI_Raw_t *ffi_raw;
 		SV *self = newSV(1);
-		FFI_Raw_t *ffi_raw = malloc(sizeof(FFI_Raw_t));
 	CODE:
+		Newx(ffi_raw, 1, FFI_Raw_t);
+
 		SvGETMAGIC(library);
 		library_name = SvPV(library, library_len);
 
@@ -100,8 +102,9 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 		ffi_raw -> ret  = _ffi_raw_get_type(SvIV(ret_type));
 		ffi_raw -> ret_type = SvIV(ret_type);
 		ffi_raw -> argc = items - 4;
-		ffi_raw -> args = malloc(sizeof(ffi_type *) * ffi_raw -> argc);
-		ffi_raw -> args_types = malloc(ffi_raw -> argc);
+
+		Newx(ffi_raw -> args, ffi_raw -> argc, ffi_type *);
+		Newx(ffi_raw -> args_types, ffi_raw -> argc, char);
 
 		for (i = 4; i < items; i++) {
 			char type = SvIV(ST(i));
@@ -118,7 +121,6 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 		if (status != FFI_OK)
 			Perl_croak(aTHX_ "Error creating calling interface");
 
-
 		RETVAL = ffi_raw;
 	OUTPUT:
 		RETVAL
@@ -133,16 +135,19 @@ _ffi_raw_destroy(self)
 #else
 		dlclose(self -> handle);
 #endif
-		free(self -> args_types);
-		free(self -> args);
-		free(self);
+		Safefree(self -> args_types);
+		Safefree(self -> args);
+		Safefree(self);
 
 #define PTR_TO_INT(ARG)				\
 	newSViv(PTR2IV(ARG))
 
+#define INT_TO_PTR(ARG)				\
+	INT2PTR(void *, SvIV(ARG))
 
 #define FFI_SET_ARG(TYPE, FN) {			\
-	TYPE *val = malloc(sizeof(TYPE));	\
+	TYPE *val;				\
+	Newx(val, 1, TYPE);			\
 	*val = FN(arg);				\
 	values[i] = val;			\
 	break;					\
@@ -167,7 +172,7 @@ _ffi_raw_call(self, ...)
 		if (self -> argc != (items - 1))
 			Perl_croak(aTHX_ "Wrong number of arguments");
 
-		values = malloc(sizeof(void *) * self -> argc);
+		Newx(values, self -> argc, void *);
 
 		for (i = 0; i < self -> argc; i++) {
 			STRLEN l;
@@ -182,17 +187,17 @@ _ffi_raw_call(self, ...)
 				case 'f': FFI_SET_ARG(float, SvNV)
 				case 'd': FFI_SET_ARG(double, SvNV)
 				case 's': {
-					char **val = malloc(sizeof(char *));
+					char **val; Newx(val, 1, char *);
 					*val = SvPV(arg, l);
 					values[i] = val;
 					break;
 				}
 				case 'p': {
-					long int val = SvIV(arg);
-					void **ptr = malloc(sizeof(void *));
-					*ptr = INT2PTR(void *, val);
-					values[i] = ptr;
-					break;
+					if (sv_isobject(arg) && sv_derived_from(
+						      arg, "FFI::Raw::MemPtr"))
+						arg = SvRV(arg);
+
+					FFI_SET_ARG(void *, INT_TO_PTR)
 				}
 			}
 		}
@@ -227,8 +232,35 @@ _ffi_raw_call(self, ...)
 			case 'p': FFI_CALL(void *, PTR_TO_INT)
 		}
 
-		free(values);
+		for (i = 0; i < self -> argc; i++)
+			Safefree(values[i]);
+
+		Safefree(values);
 
 		RETVAL = output;
 	OUTPUT:
 		RETVAL
+
+SV *
+_ffi_raw_new_ptr(number)
+	unsigned int number
+
+	INIT:
+		void *temp;
+		SV *output;
+
+	CODE:
+		Newx(temp, number, char);
+		output = PTR_TO_INT(temp);
+
+		RETVAL = output;
+	OUTPUT:
+		RETVAL
+
+void
+_ffi_raw_destroy_ptr(arg)
+	SV *arg
+
+	CODE:
+		void **ptr = INT_TO_PTR(SvRV(arg));
+		Safefree(ptr);
