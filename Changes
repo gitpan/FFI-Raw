@@ -1,9 +1,25 @@
 ==================================================
-Changes from 2011-04-27 00:00:00 +0000 to present.
+Changes from 2011-04-29 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.03 at 2012-04-26 16:34:23 +0000
+version 0.04 at 2012-04-28 14:04:25 +0000
+-----------------------------------------
+
+  Change: 9a3a86fd382bfa9eef2467b9f37bbd074294661e
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-28 16:04:14 +0000
+
+    t: fix libc name on Windows 
+
+  Change: 319a65dfcc5e764d7fe79744807e94cf0ae728f7
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-04-26 20:34:53 +0000
+
+    MemPtr.pm: add missing doc heading 
+
+-----------------------------------------
+version 0.03 at 2012-04-26 16:32:44 +0000
 -----------------------------------------
 
   Change: 46fd67519e8f938221c9acc9e96791ed321f351f

@@ -1,6 +1,6 @@
 package FFI::Raw::MemPtr;
 {
-  $FFI::Raw::MemPtr::VERSION = '0.03';
+  $FFI::Raw::MemPtr::VERSION = '0.04';
 }
 
 use strict;
@@ -14,7 +14,9 @@ FFI::Raw::MemPtr - Memory allocation and pointers for FFI::Raw
 
 =head1 VERSION
 
-version 0.03
+version 0.04
+
+=head1 METHODS
 
 =head2 new( $number )
 

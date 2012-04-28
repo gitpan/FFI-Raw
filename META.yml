@@ -24,7 +24,7 @@ resources:
   bugtracker: https://github.com/AlexBio/FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/AlexBio/FFI-Raw.git
-version: 0.03
+version: 0.04
 x_Dist_Zilla:
   plugins:
     -
