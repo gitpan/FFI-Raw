@@ -1,9 +1,73 @@
 ==================================================
-Changes from 2011-04-29 00:00:00 +0000 to present.
+Changes from 2011-05-10 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.04 at 2012-04-28 14:04:25 +0000
+version 0.05 at 2012-05-09 11:32:08 +0000
+-----------------------------------------
+
+  Change: 171ff5386079f26f5d0d7bec95005b53acfd3dc0
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:29:37 +0000
+
+    add TODO 
+
+  Change: b2dba51a6f4c21a1d94465b8158637a659ee799c
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:29:28 +0000
+
+    Raw.pm: small doc fixes 
+
+  Change: 9517669eaf45d470cf7df1b8e6eb136f115e79df
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:25:37 +0000
+
+    eg: add libuuid example 
+
+  Change: 85ff6484e3818c557a9306b72ed4ab7d43a38590
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:22:15 +0000
+
+    Raw.xs: add ptr_to_str function 
+
+  Change: f431f2ef57abbe85cdd075f4579f29f5155548b0
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:22:14 +0000
+
+    *.pm: do not "proxy" XS function 
+
+  Change: 422bb6f0a470fdee38cf4fb5f6e9eb47f4589ac9
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-01 22:31:30 +0000
+
+    Raw.xs: do not close library handle if it's NULL 
+
+  Change: a60017175439ffad15d9a959c82d1cb4a1b006de
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-01 22:29:35 +0000
+
+    new_from_ptr.pl: no need to call int() on the function pointer 
+
+  Change: 027fbd448c426ad4cbb0ea1efb8b0c103226c9cc
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-01 18:18:29 +0000
+
+    Raw.pm: add SEE ALSO section 
+
+  Change: 2424c40595786faafedaa23ddf806f0e2790ae86
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-01 18:16:46 +0000
+
+    Raw.pm: improve long description 
+
+  Change: 083aef514c056f621ac8322ffe6cfeb8c606eb1e
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-01 18:11:08 +0000
+
+    Raw.pm: add new_from_ptr method 
+
+-----------------------------------------
+version 0.04 at 2012-04-28 14:04:14 +0000
 -----------------------------------------
 
   Change: 9a3a86fd382bfa9eef2467b9f37bbd074294661e

@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <ffi.h>
 
@@ -25,6 +26,8 @@ typedef struct FFI_RAW {
 	unsigned int argc;
 } FFI_Raw_t;
 
+typedef void FFI_Raw_MemPtr_t;
+
 void *_ffi_raw_get_type(char type) {
 	switch (type) {
 		case 'v': return &ffi_type_void;
@@ -40,12 +43,16 @@ void *_ffi_raw_get_type(char type) {
 	}
 }
 
-#define NEW_BASIC_ITEMS 3
+#define PTR_TO_INT(ARG)				\
+	newSViv(PTR2IV(ARG))
+
+#define INT_TO_PTR(ARG)				\
+	INT2PTR(void *, SvIV(ARG))
 
 MODULE = FFI::Raw				PACKAGE = FFI::Raw
 
 FFI_Raw_t *
-_ffi_raw_new(class, library, function, ret_type, ...)
+new(class, library, function, ret_type, ...)
 	SV *class
 	SV *library
 	SV *function
@@ -63,7 +70,6 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 		const char *function_name;
 
 		FFI_Raw_t *ffi_raw;
-		SV *self = newSV(1);
 	CODE:
 		Newx(ffi_raw, 1, FFI_Raw_t);
 
@@ -125,11 +131,56 @@ _ffi_raw_new(class, library, function, ret_type, ...)
 	OUTPUT:
 		RETVAL
 
+FFI_Raw_t *
+new_from_ptr(class, function, ret_type, ...)
+	SV *class
+	SV *function
+	SV *ret_type
+
+	INIT:
+		int i;
+		char *error;
+		ffi_status status;
+
+		FFI_Raw_t *ffi_raw;
+	CODE:
+		Newx(ffi_raw, 1, FFI_Raw_t);
+
+		ffi_raw -> handle = NULL;
+		ffi_raw -> fn   = INT_TO_PTR(function);
+
+		ffi_raw -> ret  = _ffi_raw_get_type(SvIV(ret_type));
+		ffi_raw -> ret_type = SvIV(ret_type);
+		ffi_raw -> argc = items - 3;
+
+		Newx(ffi_raw -> args, ffi_raw -> argc, ffi_type *);
+		Newx(ffi_raw -> args_types, ffi_raw -> argc, char);
+
+		for (i = 3; i < items; i++) {
+			char type = SvIV(ST(i));
+
+			ffi_raw -> args_types[i - 3] = type;
+			ffi_raw -> args[i - 3] = _ffi_raw_get_type(type);
+		}
+
+		status = ffi_prep_cif(
+			&ffi_raw -> cif, FFI_DEFAULT_ABI, ffi_raw -> argc,
+			ffi_raw -> ret, ffi_raw -> args
+		);
+
+		if (status != FFI_OK)
+			Perl_croak(aTHX_ "Error creating calling interface");
+
+		RETVAL = ffi_raw;
+	OUTPUT:
+		RETVAL
+
 void
-_ffi_raw_destroy(self)
+DESTROY(self)
 	FFI_Raw_t *self
 
 	CODE:
+		if (self -> handle)
 #ifdef _WIN32
 		FreeLibrary(self -> handle);
 #else
@@ -138,12 +189,6 @@ _ffi_raw_destroy(self)
 		Safefree(self -> args_types);
 		Safefree(self -> args);
 		Safefree(self);
-
-#define PTR_TO_INT(ARG)				\
-	newSViv(PTR2IV(ARG))
-
-#define INT_TO_PTR(ARG)				\
-	INT2PTR(void *, SvIV(ARG))
 
 #define FFI_SET_ARG(TYPE, FN) {			\
 	TYPE *val;				\
@@ -161,7 +206,7 @@ _ffi_raw_destroy(self)
 }
 
 SV *
-_ffi_raw_call(self, ...)
+call(self, ...)
 	FFI_Raw_t *self
 
 	INIT:
@@ -241,8 +286,11 @@ _ffi_raw_call(self, ...)
 	OUTPUT:
 		RETVAL
 
-SV *
-_ffi_raw_new_ptr(number)
+MODULE = FFI::Raw				PACKAGE = FFI::Raw::MemPtr
+
+FFI_Raw_MemPtr_t *
+new(class, number)
+	SV *class
 	unsigned int number
 
 	INIT:
@@ -251,16 +299,28 @@ _ffi_raw_new_ptr(number)
 
 	CODE:
 		Newx(temp, number, char);
-		output = PTR_TO_INT(temp);
 
-		RETVAL = output;
+		RETVAL = temp;
+	OUTPUT:
+		RETVAL
+
+SV *
+tostr(self)
+	FFI_Raw_MemPtr_t *self
+
+	INIT:
+		STRLEN l;
+	CODE:
+		l = strlen((char *) self);
+
+		RETVAL = newSVpv(self, l);
 	OUTPUT:
 		RETVAL
 
 void
-_ffi_raw_destroy_ptr(arg)
-	SV *arg
+DESTROY(self)
+	FFI_Raw_MemPtr_t *self
 
 	CODE:
-		void **ptr = INT_TO_PTR(SvRV(arg));
+		void **ptr = self;
 		Safefree(ptr);

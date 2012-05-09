@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.04';
+  $FFI::Raw::VERSION = '0.05';
 }
 
 use strict;
@@ -9,15 +9,13 @@ use warnings;
 require XSLoader;
 XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
-use FFI::Raw::MemPtr;
-
 =head1 NAME
 
 FFI::Raw - Raw FFI library for Perl
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
@@ -33,11 +31,16 @@ version 0.04
 
 =head1 DESCRIPTION
 
-B<FFI::Raw> provides a raw foreign function interface for Perl. It can access
-and call functions exported by shared libraries without the need to write C/XS
-code. Dynamic symbols are automatically resolved at runtime so that the only
+B<FFI::Raw> provides a raw foreign function interface for Perl based on
+L<libffi|http://sourceware.org/libffi/>. It can access and call functions
+exported by shared libraries without the need to write C/XS code.
+
+Dynamic symbols can be automatically resolved at runtime so that the only
 information needed to use B<FFI::Raw> is the name (or path) of the target
-library, the name of the function to call and its signature.
+library, the name of the function to call and its signature (though it is
+also possible to pass a function pointer).
+
+Note that this module has nothing to do with L<FFI>.
 
 B<Attention>: this is experimental code, use at your own risk
 
@@ -51,11 +54,12 @@ C<$function> with return type C<$return_type> and creates a calling interface.
 This function takes also a variable number of types, representing the argument
 of the wanted function.
 
-=cut
+=head2 new_from_ptr( $function_ptr, $return_type [, $arg_type ...] )
 
-sub new  { FFI::Raw::_ffi_raw_new(@_)  }
+Create a new C<FFI::Raw> object from the C<$function_ptr> function pointer.
 
-sub DESTROY { FFI::Raw::_ffi_raw_destroy(shift) }
+This function takes also a variable number of types, representing the argument
+of the wanted function.
 
 =head2 call( [$arg ...] )
 
@@ -63,15 +67,14 @@ Execute the C<FFI::Raw> function C<$self>. This function takes also a variable
 number of arguments, which are passed to the called function. The argument types
 must match the types passed to C<new>.
 
-=cut
-
-sub call { FFI::Raw::_ffi_raw_call(@_) }
+SUBROUTINES
 
 =head2 memptr( $number )
 
 Allocate C<$number> bytes and return a C<FFI::Raw::MemPtr> pointing to the
 allocated memory. This can be passed to functions which take a FFI::Raw::ptr
-argument.
+argument. A C<FFI::Raw::MemPtr> can be converted to a Perl string using the
+C<tostr()> method.
 
 =cut
 
@@ -154,6 +157,10 @@ sub ptr    { ord 'p' };
 =head1 AUTHOR
 
 Alessandro Ghedini <alexbio@cpan.org>
+
+=head1 SEE ALSO
+
+L<FFI>, L<Ctypes|http://gitorious.org/perl-ctypes>
 
 =head1 LICENSE AND COPYRIGHT
 
