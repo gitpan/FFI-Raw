@@ -47,7 +47,7 @@
          "web" : "https://github.com/AlexBio/FFI-Raw"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -210,6 +210,11 @@
             },
             "name" : "ConfigureRequires",
             "version" : "4.300016"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::CheckExtraTests",
+            "name" : "CheckExtraTests",
+            "version" : "0.006"
          },
          {
             "class" : "inc::MakeMaker",

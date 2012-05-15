@@ -1,9 +1,49 @@
 ==================================================
-Changes from 2011-05-10 00:00:00 +0000 to present.
+Changes from 2011-05-16 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.05 at 2012-05-09 11:32:08 +0000
+version 0.06 at 2012-05-15 17:32:32 +0000
+-----------------------------------------
+
+  Change: b7e124b96e5f65feb832196bca6507587236094f
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-15 19:18:41 +0000
+
+    Raw.xs: implement callbacks 
+
+  Change: b58180b625b9918752f9b580ce512c1c576ad885
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-15 18:19:49 +0000
+
+    dist.ini: check extra tests before release 
+
+  Change: bfad9832e61f0a3677bd389477f001141763dc9e
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-15 18:19:49 +0000
+
+    Raw.xs: add support for short and ushort types 
+
+  Change: 11e8a4eebd8324335b2768422cda33b1029aadf2
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-15 18:07:56 +0000
+
+    xt: add experimental extra tests 
+
+  Change: dff835b991769cce35d037d5163b2a8278c0cade
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-15 15:16:55 +0000
+
+    t: fix libc path (should work under cygwin) 
+
+  Change: 19072977637e0b9175f55ceb639eb6812e3773bd
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-09 13:36:59 +0000
+
+    Raw.pm: another doc fix 
+
+-----------------------------------------
+version 0.05 at 2012-05-09 11:29:37 +0000
 -----------------------------------------
 
   Change: 171ff5386079f26f5d0d7bec95005b53acfd3dc0

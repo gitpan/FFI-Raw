@@ -29,3 +29,14 @@ t/release-check-manifest.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 typemap
+xt/01-argless.c
+xt/01-argless.t
+xt/02-simple-args.c
+xt/02-simple-args.t
+xt/03-simple-returns.c
+xt/03-simple-returns.t
+xt/04-pointers.c
+xt/04-pointers.t
+xt/05-callbacks.c
+xt/05-callbacks.t
+xt/CompileTest.pm

@@ -24,7 +24,7 @@ resources:
   bugtracker: https://github.com/AlexBio/FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/AlexBio/FFI-Raw.git
-version: 0.05
+version: 0.06
 x_Dist_Zilla:
   plugins:
     -
@@ -155,6 +155,10 @@ x_Dist_Zilla:
           type: requires
       name: ConfigureRequires
       version: 4.300016
+    -
+      class: Dist::Zilla::Plugin::CheckExtraTests
+      name: CheckExtraTests
+      version: 0.006
     -
       class: inc::MakeMaker
       name: MakeMaker

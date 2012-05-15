@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.05';
+  $FFI::Raw::VERSION = '0.06';
 }
 
 use strict;
@@ -15,7 +15,7 @@ FFI::Raw - Raw FFI library for Perl
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -67,7 +67,7 @@ Execute the C<FFI::Raw> function C<$self>. This function takes also a variable
 number of arguments, which are passed to the called function. The argument types
 must match the types passed to C<new>.
 
-SUBROUTINES
+=head1 SUBROUTINES
 
 =head2 memptr( $number )
 
@@ -79,6 +79,15 @@ C<tostr()> method.
 =cut
 
 sub memptr { FFI::Raw::MemPtr -> new(@_) }
+
+=head2 callback( $coderef, $ret_type [, $arg_type ...] )
+
+Create a callback, given a code reference C<$coderef>, its return type
+C<$ret_type> and the argument types it takes.
+
+=cut
+
+sub callback { FFI::Raw::Callback -> new(@_) }
 
 =head1 TYPES
 
@@ -105,6 +114,22 @@ Return a FFI::Raw unsigned integer type.
 =cut
 
 sub uint    { ord 'I' };
+
+=head2 FFI::Raw::short
+
+Return a FFI::Raw short integer type.
+
+=cut
+
+sub short    { ord 'z' };
+
+=head2 FFI::Raw::ushort
+
+Return a FFI::Raw unsigned short integer type.
+
+=cut
+
+sub ushort    { ord 'Z' };
 
 =head2 FFI::Raw::char
 
