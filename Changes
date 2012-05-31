@@ -1,9 +1,25 @@
 ==================================================
-Changes from 2011-05-16 00:00:00 +0000 to present.
+Changes from 2011-06-01 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.06 at 2012-05-15 17:32:32 +0000
+version 0.07 at 2012-05-31 13:36:36 +0000
+-----------------------------------------
+
+  Change: 6ddc0751cac79d9879fab90289b8944ec8b82045
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-31 15:36:25 +0000
+
+    dist.ini: remove CheckExtraTests plugin 
+
+  Change: 42f12a3af0c43c1bf8a2c1456c2dfee226fa3411
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-05-31 15:33:43 +0000
+
+    t: make extra tests default test suite 
+
+-----------------------------------------
+version 0.06 at 2012-05-15 17:18:41 +0000
 -----------------------------------------
 
   Change: b7e124b96e5f65feb832196bca6507587236094f

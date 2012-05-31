@@ -12,6 +12,8 @@ my %WriteMakefileArgs = (
   'ABSTRACT' => 'Raw FFI library for Perl',
   'AUTHOR' => 'Alessandro Ghedini <alexbio@cpan.org>',
   'BUILD_REQUIRES' => {
+    'CompileTest' => '0',
+    'Config' => '0',
     'File::Find' => '0',
     'File::Temp' => '0',
     'Test::More' => '0'
@@ -34,7 +36,7 @@ my %WriteMakefileArgs = (
     'strict' => '0',
     'warnings' => '0'
   },
-  'VERSION' => '0.06',
+  'VERSION' => '0.07',
   'test' => {
     'TESTS' => 't/*.t'
   }
