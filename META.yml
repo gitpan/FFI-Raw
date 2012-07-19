@@ -26,7 +26,7 @@ resources:
   bugtracker: https://github.com/AlexBio/p5-FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/AlexBio/p5-FFI-Raw.git
-version: 0.08
+version: 0.09
 x_Dist_Zilla:
   plugins:
     -
@@ -80,11 +80,11 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::GitHub::Meta
       name: '@Author::ALEXBIO/@GitHub/GitHub::Meta'
-      version: 0.24
+      version: 0.25
     -
       class: Dist::Zilla::Plugin::GitHub::Update
       name: '@Author::ALEXBIO/@GitHub/GitHub::Update'
-      version: 0.24
+      version: 0.25
     -
       class: Dist::Zilla::Plugin::Git::NextVersion
       name: '@Author::ALEXBIO/Git::NextVersion'
@@ -132,6 +132,10 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Git::Tag
       name: '@Author::ALEXBIO/Git::Tag'
+      version: 1.121820
+    -
+      class: Dist::Zilla::Plugin::Git::Push
+      name: '@Author::ALEXBIO/Git::Push'
       version: 1.121820
     -
       class: Dist::Zilla::Plugin::UploadToCPAN

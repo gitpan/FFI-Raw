@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.08';
+  $FFI::Raw::VERSION = '0.09';
 }
 
 use strict;
@@ -15,7 +15,7 @@ FFI::Raw - Raw FFI library for Perl
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -41,8 +41,6 @@ library, the name of the function to call and its signature (though it is
 also possible to pass a function pointer).
 
 Note that this module has nothing to do with L<FFI>.
-
-B<Attention>: this is experimental code, use at your own risk
 
 =head1 METHODS
 
@@ -82,8 +80,9 @@ sub memptr { FFI::Raw::MemPtr -> new(@_) }
 
 =head2 callback( $coderef, $ret_type [, $arg_type ...] )
 
-Create a callback, given a code reference C<$coderef>, its return type
-C<$ret_type> and the argument types it takes.
+Create a callback using code reference C<$coderef> as body and return a
+C<FFI::Raw::Callback> poiting to it. The signature (return and arguments types)
+must also be passed.
 
 =cut
 
@@ -93,7 +92,7 @@ sub callback { FFI::Raw::Callback -> new(@_) }
 
 =head2 FFI::Raw::void
 
-Return a FFI::Raw void type.
+Return a C<FFI::Raw> void type.
 
 =cut
 
@@ -101,7 +100,7 @@ sub void   { ord 'v' };
 
 =head2 FFI::Raw::int
 
-Return a FFI::Raw integer type.
+Return a C<FFI::Raw> integer type.
 
 =cut
 
@@ -109,7 +108,7 @@ sub int    { ord 'i' };
 
 =head2 FFI::Raw::uint
 
-Return a FFI::Raw unsigned integer type.
+Return a C<FFI::Raw> unsigned integer type.
 
 =cut
 
@@ -117,7 +116,7 @@ sub uint    { ord 'I' };
 
 =head2 FFI::Raw::short
 
-Return a FFI::Raw short integer type.
+Return a C<FFI::Raw> short integer type.
 
 =cut
 
@@ -125,7 +124,7 @@ sub short    { ord 'z' };
 
 =head2 FFI::Raw::ushort
 
-Return a FFI::Raw unsigned short integer type.
+Return a C<FFI::Raw> unsigned short integer type.
 
 =cut
 
@@ -133,7 +132,7 @@ sub ushort    { ord 'Z' };
 
 =head2 FFI::Raw::char
 
-Return a FFI::Raw char type.
+Return a C<FFI::Raw> char type.
 
 =cut
 
@@ -141,7 +140,7 @@ sub char   { ord 'c' };
 
 =head2 FFI::Raw::uchar
 
-Return a FFI::Raw unsigned char type.
+Return a C<FFI::Raw> unsigned char type.
 
 =cut
 
@@ -149,7 +148,7 @@ sub uchar   { ord 'C' };
 
 =head2 FFI::Raw::float
 
-Return a FFI::Raw float type.
+Return a C<FFI::Raw> float type.
 
 =cut
 
@@ -157,7 +156,7 @@ sub float  { ord 'f' };
 
 =head2 FFI::Raw::double
 
-Return a FFI::Raw double type.
+Return a C<FFI::Raw> double type.
 
 =cut
 
@@ -165,7 +164,7 @@ sub double { ord 'd' };
 
 =head2 FFI::Raw::str
 
-Return a FFI::Raw string type.
+Return a C<FFI::Raw> string type.
 
 =cut
 
@@ -173,7 +172,7 @@ sub str    { ord 's' };
 
 =head2 FFI::Raw::ptr
 
-Return a FFI::Raw pointer type.
+Return a C<FFI::Raw> pointer type.
 
 =cut
 
