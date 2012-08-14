@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.09';
+  $FFI::Raw::VERSION = '0.10';
 }
 
 use strict;
@@ -11,11 +11,11 @@ XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
 =head1 NAME
 
-FFI::Raw - Raw FFI library for Perl
+FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -70,7 +70,7 @@ must match the types passed to C<new>.
 =head2 memptr( $number )
 
 Allocate C<$number> bytes and return a C<FFI::Raw::MemPtr> pointing to the
-allocated memory. This can be passed to functions which take a FFI::Raw::ptr
+allocated memory. This can be passed to functions which take a C<FFI::Raw::ptr>
 argument. A C<FFI::Raw::MemPtr> can be converted to a Perl string using the
 C<tostr()> method.
 
@@ -82,7 +82,8 @@ sub memptr { FFI::Raw::MemPtr -> new(@_) }
 
 Create a callback using code reference C<$coderef> as body and return a
 C<FFI::Raw::Callback> poiting to it. The signature (return and arguments types)
-must also be passed.
+must also be passed. This can be passed to functions which take a
+C<FFI::Raw::ptr> argument.
 
 =cut
 

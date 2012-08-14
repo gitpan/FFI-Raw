@@ -1,9 +1,37 @@
 ==================================================
-Changes from 2011-07-20 00:00:00 +0000 to present.
+Changes from 2011-08-15 00:00:00 +0000 to present.
 ==================================================
 
 -----------------------------------------
-version 0.09 at 2012-07-19 09:35:36 +0000
+version 0.10 at 2012-08-14 11:40:31 +0000
+-----------------------------------------
+
+  Change: c07826fa5c7fa7d3e83da9d6bbf9574a35e5d0d9
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-08-14 13:33:33 +0000
+
+    Raw.pm: update short description 
+
+  Change: 0ced6fb0fcbeaccaa96e52cd6335a84425c47743
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-08-13 21:08:09 +0000
+
+    TODO: remove 
+
+  Change: 95044dd5faae2ef787d36b866b583b17bc6ad09f
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-08-13 21:07:39 +0000
+
+    Raw.xs: clean-up 
+
+  Change: 5349391e6288e8a46c9e7a3017ac0e897772f643
+  Author: Alessandro Ghedini <al3xbio@gmail.com>
+  Date : 2012-07-23 16:38:20 +0000
+
+    Raw.pm: more docs fixes 
+
+-----------------------------------------
+version 0.09 at 2012-07-18 22:26:20 +0000
 -----------------------------------------
 
   Change: d7c0f3de5a09fc399012e7f258cc13d54b91001a

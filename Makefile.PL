@@ -9,7 +9,7 @@ use warnings;
 use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'Raw FFI library for Perl',
+  'ABSTRACT' => 'Perl bindings to the portable FFI library (libffi)',
   'AUTHOR' => 'Alessandro Ghedini <alexbio@cpan.org>',
   'BUILD_REQUIRES' => {
     'CompileTest' => '0',
@@ -36,7 +36,7 @@ my %WriteMakefileArgs = (
     'strict' => '0',
     'warnings' => '0'
   },
-  'VERSION' => '0.09',
+  'VERSION' => '0.10',
   'test' => {
     'TESTS' => 't/*.t'
   }
