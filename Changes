@@ -1,367 +1,75 @@
-==================================================
-Changes from 2011-08-21 00:00:00 +0000 to present.
-==================================================
+Revision history for FFI-Raw
 
------------------------------------------
-version 0.12 at 2012-08-20 11:33:59 +0000
------------------------------------------
+0.13      2012-09-19 18:44:55 Europe/Rome
 
-  Change: d58b1effd4b74f4043ca0b22acbddf1d3007c912
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-08-20 13:29:05 +0000
+ - Make types constants inlineable by perl (GH#2) (thanks, DOLMEN!)
+ - Add a proper Changes file (GH#3)
+ - Overload &{} to make a FFI::Raw object similar to a CODE ref (GH#4)
 
-    travis.yml: add travis ci config 
+0.12      2012-08-20 11:34:16 Europe/Rome
 
------------------------------------------
-version 0.11 at 2012-08-14 12:06:30 +0000
------------------------------------------
+ - Rebuild to update META.* repository links (no functional changes)
 
-  Change: 83155c96c3c22a7023b110654b407a84fdb0b865
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-08-14 14:06:30 +0000
+0.11      2012-08-14 12:07:18 Europe/Rome
 
-    dist.ini: exclude internal module from prereqs 
+ - Rebuild to remove internal test module from prereqs (no functional changes)
 
------------------------------------------
-version 0.10 at 2012-08-14 11:33:33 +0000
------------------------------------------
+0.10      2012-08-14 11:40:47 Europe/Rome
 
-  Change: c07826fa5c7fa7d3e83da9d6bbf9574a35e5d0d9
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-08-14 13:33:33 +0000
+ - Documentation fixes (no functional changes)
+ - Code clean-up (no functional changes)
 
-    Raw.pm: update short description 
+0.09      2012-07-19 09:36:28 Europe/Rome
 
-  Change: 0ced6fb0fcbeaccaa96e52cd6335a84425c47743
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-08-13 21:08:09 +0000
+ - Documentation fixes (no functional changes)
+ - Remove experimental code notice (no functional changes)
 
-    TODO: remove 
+0.08      2012-07-07 12:54:34 Europe/Rome
 
-  Change: 95044dd5faae2ef787d36b866b583b17bc6ad09f
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-08-13 21:07:39 +0000
+ - Rebuild to update META.* repository links (no functional changes)
 
-    Raw.xs: clean-up 
+0.07      2012-05-31 13:36:58 Europe/Rome
 
-  Change: 5349391e6288e8a46c9e7a3017ac0e897772f643
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-07-23 16:38:20 +0000
+ - Make xt test suite the default (no functional changes)
 
-    Raw.pm: more docs fixes 
+0.06      2012-05-15 17:33:49 Europe/Rome
 
------------------------------------------
-version 0.09 at 2012-07-18 22:26:20 +0000
------------------------------------------
+ - Add support for Perl callbacks
+ - Add short and ushort types
+ - Add experimental xt test suite
+ - Fix libc path in tests (no functional changes)
+ - Documentation fixes (no functional changes)
 
-  Change: d7c0f3de5a09fc399012e7f258cc13d54b91001a
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-07-19 00:26:20 +0000
+0.05      2012-05-09 11:32:43 Europe/Rome
 
-    Raw.pm: docs fixes 
+ - Documentation fixes (no functional changes)
+ - Add libuuid example
+ - Add new_from_ptr() and ptr_to_str() subs
+ - Use XS functions directly
+ - Check for NULL library handle before closing it
 
-  Change: b4173e9d44e80521e4f52d18462f6f8e65f294e5
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-07-13 23:17:58 +0000
+0.04      2012-04-28 14:04:54 Europe/Rome
 
-    Raw.pm: remove scary notice 
+ - Fix libc test on Windows (no functional changes)
+ - Fix FFI::Raw::MemPtr docs (no functional changes)
 
------------------------------------------
-version 0.08 at 2012-07-07 12:53:02 +0000
------------------------------------------
+0.03      2012-04-26 16:35:05 Europe/Rome
 
-  Change: 15d0165cc4b77b573253ad39a0654f84731c3ed0
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-07-07 14:53:02 +0000
+ - Documentation improvements (no functional changes)
+ - Add zeromq examples
+ - Update malloc.pl example
+ - Add FFI::Raw::MemPtr type and memptr() sub
+ - Use perl's memory allocation macros
 
-    dist.ini: update repo name 
+0.02      2012-04-19 15:12:42 Europe/Rome
 
------------------------------------------
-version 0.07 at 2012-05-31 13:36:25 +0000
------------------------------------------
+ - Unload libraries on DESTROY
+ - Fix argc check
+ - Use a typemap
+ - Check number of arguments in call()
+ - Add uint and uchar types
+ - Documentation fixes (no functional changes)
 
-  Change: 6ddc0751cac79d9879fab90289b8944ec8b82045
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-31 15:36:25 +0000
+0.01      2012-04-18 15:36:21 Europe/Rome
 
-    dist.ini: remove CheckExtraTests plugin 
-
-  Change: 42f12a3af0c43c1bf8a2c1456c2dfee226fa3411
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-31 15:33:43 +0000
-
-    t: make extra tests default test suite 
-
------------------------------------------
-version 0.06 at 2012-05-15 17:18:41 +0000
------------------------------------------
-
-  Change: b7e124b96e5f65feb832196bca6507587236094f
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-15 19:18:41 +0000
-
-    Raw.xs: implement callbacks 
-
-  Change: b58180b625b9918752f9b580ce512c1c576ad885
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-15 18:19:49 +0000
-
-    dist.ini: check extra tests before release 
-
-  Change: bfad9832e61f0a3677bd389477f001141763dc9e
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-15 18:19:49 +0000
-
-    Raw.xs: add support for short and ushort types 
-
-  Change: 11e8a4eebd8324335b2768422cda33b1029aadf2
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-15 18:07:56 +0000
-
-    xt: add experimental extra tests 
-
-  Change: dff835b991769cce35d037d5163b2a8278c0cade
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-15 15:16:55 +0000
-
-    t: fix libc path (should work under cygwin) 
-
-  Change: 19072977637e0b9175f55ceb639eb6812e3773bd
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:36:59 +0000
-
-    Raw.pm: another doc fix 
-
------------------------------------------
-version 0.05 at 2012-05-09 11:29:37 +0000
------------------------------------------
-
-  Change: 171ff5386079f26f5d0d7bec95005b53acfd3dc0
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:29:37 +0000
-
-    add TODO 
-
-  Change: b2dba51a6f4c21a1d94465b8158637a659ee799c
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:29:28 +0000
-
-    Raw.pm: small doc fixes 
-
-  Change: 9517669eaf45d470cf7df1b8e6eb136f115e79df
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:25:37 +0000
-
-    eg: add libuuid example 
-
-  Change: 85ff6484e3818c557a9306b72ed4ab7d43a38590
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:22:15 +0000
-
-    Raw.xs: add ptr_to_str function 
-
-  Change: f431f2ef57abbe85cdd075f4579f29f5155548b0
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-09 13:22:14 +0000
-
-    *.pm: do not "proxy" XS function 
-
-  Change: 422bb6f0a470fdee38cf4fb5f6e9eb47f4589ac9
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-01 22:31:30 +0000
-
-    Raw.xs: do not close library handle if it's NULL 
-
-  Change: a60017175439ffad15d9a959c82d1cb4a1b006de
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-01 22:29:35 +0000
-
-    new_from_ptr.pl: no need to call int() on the function pointer 
-
-  Change: 027fbd448c426ad4cbb0ea1efb8b0c103226c9cc
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-01 18:18:29 +0000
-
-    Raw.pm: add SEE ALSO section 
-
-  Change: 2424c40595786faafedaa23ddf806f0e2790ae86
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-01 18:16:46 +0000
-
-    Raw.pm: improve long description 
-
-  Change: 083aef514c056f621ac8322ffe6cfeb8c606eb1e
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-05-01 18:11:08 +0000
-
-    Raw.pm: add new_from_ptr method 
-
------------------------------------------
-version 0.04 at 2012-04-28 14:04:14 +0000
------------------------------------------
-
-  Change: 9a3a86fd382bfa9eef2467b9f37bbd074294661e
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-28 16:04:14 +0000
-
-    t: fix libc name on Windows 
-
-  Change: 319a65dfcc5e764d7fe79744807e94cf0ae728f7
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 20:34:53 +0000
-
-    MemPtr.pm: add missing doc heading 
-
------------------------------------------
-version 0.03 at 2012-04-26 16:32:44 +0000
------------------------------------------
-
-  Change: 46fd67519e8f938221c9acc9e96791ed321f351f
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 18:32:44 +0000
-
-    *.pm: improve docs 
-
-  Change: 295c378776dcd8d85d8ffb4dc7cacb847aaea77d
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 18:23:58 +0000
-
-    eg: add zeromq examples 
-
-  Change: 99b4c911eb3ce664803eff5affdf12ff12c66978
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 17:36:59 +0000
-
-    malloc.pl: update example 
-
-  Change: 3a2221b206134488bc231fec3e24846f8365e6b6
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 17:36:25 +0000
-
-    Raw.pm: add memptr function 
-
-  Change: 182293e4ae67cc35a445aa56d3a8ca03dda0c7b0
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 17:36:25 +0000
-
-    MemPtr.pm: add FFI::Raw::MemPtr type 
-
-  Change: 8a8c8188d53d5ae30e70011ed9483c7279aacf68
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 17:36:20 +0000
-
-    Raw.xs: add raw ptr functions 
-
-  Change: 2d521bafed37299ab94901387599c85c7d40a2b3
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 11:31:45 +0000
-
-    Raw.xs: use perl's allocation macros 
-
-  Change: 4f5c31637097c69102028ba42838138ef31ca27c
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-26 11:01:27 +0000
-
-    03-double.t: fix test 
-
------------------------------------------
-version 0.02 at 2012-04-19 15:10:17 +0000
------------------------------------------
-
-  Change: ed3b277c8fd3993e64813b7a7c92706840eb6baf
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 17:10:17 +0000
-
-    Raw.xs: unload libraries on DESTROY 
-
-  Change: f93065eb7b3dc3df2a684dac15ddaf5370b08f9e
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 17:06:40 +0000
-
-    03-double.t: make not exec 
-
-  Change: 7b3b7e8474ca423f43393db09f87d6229c937a87
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 17:05:39 +0000
-
-    Raw.xs: fix argc check 
-
-  Change: b4a88204a22f0ed7f9761afbd651b52d09511a6b
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 17:02:27 +0000
-
-    Raw.xs: use a typemap 
-
-  Change: 8a6eadb7b13f1970d561ac6d7894f5ae5671cf96
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 17:02:20 +0000
-
-    Raw.xs: check number of arguments in call 
-
-  Change: 0a9089ddf7e0639b83d812e6dca76d157a009c77
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 16:47:28 +0000
-
-    add uint and uchar types 
-
-  Change: f1331af6309b365ba8c4ad2c7a1bded5e7ffd20f
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-19 16:40:43 +0000
-
-    Raw.pm: docs fixes 
-
------------------------------------------
-version 0.01 at 2012-04-18 15:35:48 +0000
------------------------------------------
-
-  Change: 66ca644e43e5bf3812d5fedeaf8bc254f123a888
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 17:35:48 +0000
-
-    Raw.pm: add experimental code notice 
-
-  Change: 4c785c6c9c517b9a792607dd6437c3c7c07c7667
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 17:33:16 +0000
-
-    eg: add libnotify example 
-
-  Change: 82f23c0a4713e70cef6a20b0119f4335357fed33
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 16:58:21 +0000
-
-    Raw.xs: initial support for Windows 
-
-  Change: 5f89f6915fc4aa30137f48b871e2265621af62e3
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 15:57:30 +0000
-
-    Raw.xs: remopve duplicated code 
-
-  Change: 13c2bde70c6bf42812880b1de8b46d0257e02a8f
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 15:21:35 +0000
-
-    string.pl: fix strstr example 
-
-  Change: 2bccb7af669e0c844a3290dc7f2a6472d20ff8ac
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 14:47:17 +0000
-
-    various code and docs fixes + tests 
-
-  Change: 9a7319739afc39a1166a5817b4616901a2dbe180
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-18 11:34:40 +0000
-
-    add docs and few fixes 
-
-  Change: 05229b177ad857e830cb2cd71ae36139e2db8c52
-  Author: Alessandro Ghedini <al3xbio@gmail.com>
-  Date : 2012-04-17 23:57:20 +0000
-
-    initial commit 
-
-================
-End of releases.
-================
+ - Initial version

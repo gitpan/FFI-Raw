@@ -32,10 +32,11 @@ my %WriteMakefileArgs = (
   'OBJECT' => '$(O_FILES)',
   'PREREQ_PM' => {
     'XSLoader' => '0',
+    'overload' => '0',
     'strict' => '0',
     'warnings' => '0'
   },
-  'VERSION' => '0.12',
+  'VERSION' => '0.13',
   'test' => {
     'TESTS' => 't/*.t'
   }

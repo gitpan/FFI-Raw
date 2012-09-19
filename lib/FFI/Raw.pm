@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.12';
+  $FFI::Raw::VERSION = '0.13';
 }
 
 use strict;
@@ -9,13 +9,20 @@ use warnings;
 require XSLoader;
 XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
+use overload '&{}' => \&_call_deref;
+
+sub _call_deref {
+	my $ffi = shift;
+	return sub { $ffi -> call(@_) };
+}
+
 =head1 NAME
 
 FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 
@@ -65,6 +72,14 @@ Execute the C<FFI::Raw> function C<$self>. This function takes also a variable
 number of arguments, which are passed to the called function. The argument types
 must match the types passed to C<new>.
 
+The C<FFI::Raw> object can be used as a CODE reference as well. Dereferencing
+the object will work just like call():
+
+    $cos -> call(2.0); # normal call() call
+    $cos -> (2.0);     # dereference as CODE ref
+
+This works becasue FFI::Raw overloads the C<&{}> operator.
+
 =head1 SUBROUTINES
 
 =head2 memptr( $number )
@@ -97,7 +112,7 @@ Return a C<FFI::Raw> void type.
 
 =cut
 
-sub void   { ord 'v' };
+sub void ()  { ord 'v' }
 
 =head2 FFI::Raw::int
 
@@ -105,7 +120,7 @@ Return a C<FFI::Raw> integer type.
 
 =cut
 
-sub int    { ord 'i' };
+sub int ()   { ord 'i' }
 
 =head2 FFI::Raw::uint
 
@@ -113,7 +128,7 @@ Return a C<FFI::Raw> unsigned integer type.
 
 =cut
 
-sub uint    { ord 'I' };
+sub uint ()   { ord 'I' }
 
 =head2 FFI::Raw::short
 
@@ -121,7 +136,7 @@ Return a C<FFI::Raw> short integer type.
 
 =cut
 
-sub short    { ord 'z' };
+sub short ()   { ord 'z' }
 
 =head2 FFI::Raw::ushort
 
@@ -129,7 +144,7 @@ Return a C<FFI::Raw> unsigned short integer type.
 
 =cut
 
-sub ushort    { ord 'Z' };
+sub ushort ()   { ord 'Z' }
 
 =head2 FFI::Raw::char
 
@@ -137,7 +152,7 @@ Return a C<FFI::Raw> char type.
 
 =cut
 
-sub char   { ord 'c' };
+sub char ()  { ord 'c' }
 
 =head2 FFI::Raw::uchar
 
@@ -145,7 +160,7 @@ Return a C<FFI::Raw> unsigned char type.
 
 =cut
 
-sub uchar   { ord 'C' };
+sub uchar ()  { ord 'C' }
 
 =head2 FFI::Raw::float
 
@@ -153,7 +168,7 @@ Return a C<FFI::Raw> float type.
 
 =cut
 
-sub float  { ord 'f' };
+sub float () { ord 'f' }
 
 =head2 FFI::Raw::double
 
@@ -161,7 +176,7 @@ Return a C<FFI::Raw> double type.
 
 =cut
 
-sub double { ord 'd' };
+sub double () { ord 'd' }
 
 =head2 FFI::Raw::str
 
@@ -169,7 +184,7 @@ Return a C<FFI::Raw> string type.
 
 =cut
 
-sub str    { ord 's' };
+sub str ()   { ord 's' }
 
 =head2 FFI::Raw::ptr
 
@@ -177,7 +192,7 @@ Return a C<FFI::Raw> pointer type.
 
 =cut
 
-sub ptr    { ord 'p' };
+sub ptr ()   { ord 'p' }
 
 =head1 AUTHOR
 
