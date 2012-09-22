@@ -1,15 +1,19 @@
 package inc::MakeMaker;
 
 use Moose;
-use Devel::CheckLib;
 
 extends 'Dist::Zilla::Plugin::MakeMaker::Awesome';
 
 override _build_MakeFile_PL_template => sub {
 	my ($self) = @_;
-	my $template  = "use Devel::CheckLib;\n";
-	$template .= "check_lib_or_exit(lib => 'dl');\n" if $^O ne 'MSWin32';
-	$template .= "check_lib_or_exit(lib => 'ffi');\n";
+
+	my $template  = <<'TEMPLATE';
+chdir('xs/libffi');
+system('./configure --disable-builddir --with-pic');
+system('make');
+chdir('../..');
+
+TEMPLATE
 
 	return $template.super();
 };
@@ -17,9 +21,8 @@ override _build_MakeFile_PL_template => sub {
 override _build_WriteMakefile_args => sub {
 	return +{
 		%{ super() },
-		LIBS	=> ['-ldl -lffi'],
-		INC	=> '-I.',
-		OBJECT	=> '$(O_FILES)',
+		INC	=> '-I. -Ixs/libffi/include',
+		OBJECT	=> '$(O_FILES) xs/libffi/.libs/libffi.a',
 	}
 };
 

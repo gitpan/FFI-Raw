@@ -26,7 +26,7 @@ resources:
   bugtracker: https://github.com/ghedo/p5-FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/ghedo/p5-FFI-Raw.git
-version: 0.13
+version: 0.14
 x_Dist_Zilla:
   plugins:
     -
