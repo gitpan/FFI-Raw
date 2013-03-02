@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.16';
+  $FFI::Raw::VERSION = '0.17';
 }
 
 use strict;
@@ -22,7 +22,7 @@ FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 
@@ -84,10 +84,7 @@ This works becasue FFI::Raw overloads the C<&{}> operator.
 
 =head2 memptr( $number )
 
-Allocate C<$number> bytes and return a C<FFI::Raw::MemPtr> pointing to the
-allocated memory. This can be passed to functions which take a C<FFI::Raw::ptr>
-argument. A C<FFI::Raw::MemPtr> can be converted to a Perl string using the
-C<tostr()> method.
+Create a L<FFI::Raw::MemPtr>. This is a shortcut for C<FFI::Raw::MemPtr-E<gt>new(...)>.
 
 =cut
 
@@ -95,10 +92,7 @@ sub memptr { FFI::Raw::MemPtr -> new(@_) }
 
 =head2 callback( $coderef, $ret_type [, $arg_type ...] )
 
-Create a callback using code reference C<$coderef> as body and return a
-C<FFI::Raw::Callback> poiting to it. The signature (return and arguments types)
-must also be passed. This can be passed to functions which take a
-C<FFI::Raw::ptr> argument.
+Create a L<FFI::Raw::Callback>. This is a shortcut for C<FFI::Raw::Callback-E<gt>new(...)>.
 
 =cut
 

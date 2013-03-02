@@ -1,27 +1,44 @@
 MODULE = FFI::Raw				PACKAGE = FFI::Raw::MemPtr
 
 FFI_Raw_MemPtr_t *
-new(class, number)
+new(class, length)
 	SV *class
-	unsigned int number
-
-	INIT:
-		void *temp;
-		SV *output;
+	unsigned int length
 
 	CODE:
-		Newx(temp, number, char);
+		Newx(RETVAL, length, char);
 
-		RETVAL = temp;
+	OUTPUT: RETVAL
+
+FFI_Raw_MemPtr_t *
+new_from_buf(class, buffer, length)
+	SV *class
+	SV *buffer
+	unsigned int length
+
+	CODE:
+		Newx(RETVAL, length, char);
+		Copy(SvPVX(buffer), RETVAL, length, char);
 
 	OUTPUT: RETVAL
 
 SV *
-tostr(self)
+tostr(self, ...)
 	FFI_Raw_MemPtr_t *self
 
+	PROTOTYPE: $;$
 	CODE:
-		RETVAL = newSVpv(self, 0);
+		switch (items) {
+			case 1:
+				RETVAL = newSVpv(self, 0);
+				break;
+
+			case 2:
+				RETVAL = newSVpv(self, SvUV(ST(1)));
+				break;
+
+			default: Perl_croak(aTHX_ "Wrong number of arguments");
+		}
 
 	OUTPUT: RETVAL
 

@@ -6,6 +6,7 @@ META.json
 META.yml
 Makefile.PL
 README
+README.pod
 Raw.xs
 dist.ini
 eg/getpid.pl
@@ -20,6 +21,8 @@ eg/zmq_client.pl
 eg/zmq_server.pl
 inc/MakeMaker.pm
 lib/FFI/Raw.pm
+lib/FFI/Raw/Callback.pm
+lib/FFI/Raw/MemPtr.pm
 t/00-compile.t
 t/01-argless.c
 t/01-argless.t
@@ -31,6 +34,8 @@ t/04-pointers.c
 t/04-pointers.t
 t/05-callbacks.c
 t/05-callbacks.t
+t/06-struct.c
+t/06-struct.t
 t/CompileTest.pm
 t/release-check-manifest.t
 t/release-pod-coverage.t
@@ -71,7 +76,7 @@ xs/libffi/ltmain.sh
 xs/libffi/m4/asmcfi.m4
 xs/libffi/m4/ax_cc_maxopt.m4
 xs/libffi/m4/ax_cflags_warn_all.m4
-xs/libffi/m4/ax_check_compiler_flags.m4
+xs/libffi/m4/ax_check_compile_flag.m4
 xs/libffi/m4/ax_compiler_vendor.m4
 xs/libffi/m4/ax_configure_args.m4
 xs/libffi/m4/ax_enable_builddir.m4
@@ -90,6 +95,7 @@ xs/libffi/man/ffi_prep_cif_var.3
 xs/libffi/mdate-sh
 xs/libffi/missing
 xs/libffi/msvcc.sh
+xs/libffi/patches/aarch64
 xs/libffi/patches/aix-fix
 xs/libffi/patches/aix-ibm-xlc
 xs/libffi/patches/alpha
@@ -106,8 +112,10 @@ xs/libffi/patches/copyright-updates
 xs/libffi/patches/darwin-EH-fix
 xs/libffi/patches/darwin-missing-semi
 xs/libffi/patches/darwin11
+xs/libffi/patches/darwin12
 xs/libffi/patches/debug-build
 xs/libffi/patches/dist-tests
+xs/libffi/patches/emutramp
 xs/libffi/patches/ffi_last_abi
 xs/libffi/patches/ffitarget-include-fix
 xs/libffi/patches/fix-docs
@@ -149,6 +157,7 @@ xs/libffi/patches/sparc-abi-check
 xs/libffi/patches/sparc-v8-aggregate-returns
 xs/libffi/patches/stand-alone
 xs/libffi/patches/stdcall-x86-closure-fix
+xs/libffi/patches/tile
 xs/libffi/patches/undefine_AC_ARG_VAR_PRECIOUS
 xs/libffi/patches/ungccify
 xs/libffi/patches/unlikely
@@ -157,6 +166,7 @@ xs/libffi/patches/v3_0_11
 xs/libffi/patches/vararg_float_test_fix
 xs/libffi/patches/variadic
 xs/libffi/patches/vfp-eabi
+xs/libffi/patches/whitespace-fix
 xs/libffi/patches/win32
 xs/libffi/patches/win32-return-sign
 xs/libffi/patches/win32_tests
@@ -171,6 +181,9 @@ xs/libffi/patches/xcode
 xs/libffi/patches/xcode-improvements
 xs/libffi/patches/xfail-updates
 xs/libffi/patches/xpass
+xs/libffi/src/aarch64/ffi.c
+xs/libffi/src/aarch64/ffitarget.h
+xs/libffi/src/aarch64/sysv.S
 xs/libffi/src/alpha/ffi.c
 xs/libffi/src/alpha/ffitarget.h
 xs/libffi/src/alpha/osf.S
@@ -243,6 +256,9 @@ xs/libffi/src/sparc/ffi.c
 xs/libffi/src/sparc/ffitarget.h
 xs/libffi/src/sparc/v8.S
 xs/libffi/src/sparc/v9.S
+xs/libffi/src/tile/ffi.c
+xs/libffi/src/tile/ffitarget.h
+xs/libffi/src/tile/tile.S
 xs/libffi/src/types.c
 xs/libffi/src/x86/darwin.S
 xs/libffi/src/x86/darwin64.S
@@ -324,10 +340,15 @@ xs/libffi/testsuite/libffi.call/cls_pointer_stack.c
 xs/libffi/testsuite/libffi.call/cls_schar.c
 xs/libffi/testsuite/libffi.call/cls_sint.c
 xs/libffi/testsuite/libffi.call/cls_sshort.c
+xs/libffi/testsuite/libffi.call/cls_struct_va1.c
 xs/libffi/testsuite/libffi.call/cls_uchar.c
+xs/libffi/testsuite/libffi.call/cls_uchar_va.c
 xs/libffi/testsuite/libffi.call/cls_uint.c
+xs/libffi/testsuite/libffi.call/cls_uint_va.c
+xs/libffi/testsuite/libffi.call/cls_ulong_va.c
 xs/libffi/testsuite/libffi.call/cls_ulonglong.c
 xs/libffi/testsuite/libffi.call/cls_ushort.c
+xs/libffi/testsuite/libffi.call/cls_ushort_va.c
 xs/libffi/testsuite/libffi.call/err_bad_abi.c
 xs/libffi/testsuite/libffi.call/err_bad_typedef.c
 xs/libffi/testsuite/libffi.call/fastthis1_win32.c
@@ -349,6 +370,7 @@ xs/libffi/testsuite/libffi.call/negint.c
 xs/libffi/testsuite/libffi.call/nested_struct.c
 xs/libffi/testsuite/libffi.call/nested_struct1.c
 xs/libffi/testsuite/libffi.call/nested_struct10.c
+xs/libffi/testsuite/libffi.call/nested_struct11.c
 xs/libffi/testsuite/libffi.call/nested_struct2.c
 xs/libffi/testsuite/libffi.call/nested_struct3.c
 xs/libffi/testsuite/libffi.call/nested_struct4.c
@@ -393,6 +415,11 @@ xs/libffi/testsuite/libffi.call/struct7.c
 xs/libffi/testsuite/libffi.call/struct8.c
 xs/libffi/testsuite/libffi.call/struct9.c
 xs/libffi/testsuite/libffi.call/testclosure.c
+xs/libffi/testsuite/libffi.call/uninitialized.c
+xs/libffi/testsuite/libffi.call/va_1.c
+xs/libffi/testsuite/libffi.call/va_struct1.c
+xs/libffi/testsuite/libffi.call/va_struct2.c
+xs/libffi/testsuite/libffi.call/va_struct3.c
 xs/libffi/testsuite/libffi.special/ffitestcxx.h
 xs/libffi/testsuite/libffi.special/special.exp
 xs/libffi/testsuite/libffi.special/unwindtest.cc

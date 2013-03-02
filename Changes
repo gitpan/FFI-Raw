@@ -1,6 +1,15 @@
 Revision history for FFI-Raw
 
+0.17      2013-03-02 19:20:35 Europe/Rome
+
+ - Update libffi to 61a0549
+ - Add FFI::Raw::MemPtr -> new_from_buf() method
+ - Improve documentation for FFI::Raw::MemPtr and FFI::Raw::Callback
+ - FFI::Raw::MemPtr -> tostr() method now takes an optional length parameter
+
 0.16      2012-10-02 18:30:12 Europe/Rome
+
+ - Fix build on OpenBSD
 
 0.15      2012-09-30 14:35:47 Europe/Rome
 

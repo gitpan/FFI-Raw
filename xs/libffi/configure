@@ -627,6 +627,8 @@ FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 sys_symbol_underscore
 HAVE_LONG_DOUBLE
 ALLOCA
+TILE_FALSE
+TILE_TRUE
 PA64_HPUX_FALSE
 PA64_HPUX_TRUE
 PA_HPUX_FALSE
@@ -649,6 +651,8 @@ AVR32_FALSE
 AVR32_TRUE
 ARM_FALSE
 ARM_TRUE
+AARCH64_FALSE
+AARCH64_TRUE
 POWERPC_FREEBSD_FALSE
 POWERPC_FREEBSD_TRUE
 POWERPC_DARWIN_FALSE
@@ -721,6 +725,7 @@ CCAS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
+am__nodep
 AMDEPBACKSLASH
 AMDEP_FALSE
 AMDEP_TRUE
@@ -823,6 +828,7 @@ enable_libtool_lock
 enable_portable_binary
 with_gcc_arch
 enable_maintainer_mode
+enable_pax_emutramp
 enable_debug
 enable_structs
 enable_raw_api
@@ -1470,6 +1476,7 @@ Optional Features:
                           unportable binaries
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --enable-pax_emutramp       enable pax emulated trampolines, for we can't use PROT_EXEC
   --enable-debug          debugging mode
   --disable-structs       omit code for struct support
   --disable-raw-api       make the raw api unavailable
@@ -3229,11 +3236,11 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 
 # We need awk for the "check" target.  The system "awk" is bad on
 # some platforms.
-# Always define AMTAR for backward compatibility.
+# Always define AMTAR for backward compatibility.  Yes, it's still used
+# in the wild :-(  We should find a proper way to deprecate it ...
+AMTAR='$${TAR-tar}'
 
-AMTAR=${AMTAR-"${am_missing_run}tar"}
-
-am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
+am__tar='$${TAR-tar} chof - "$$tardir"' am__untar='$${TAR-tar} xf -'
 
 
 
@@ -4091,6 +4098,7 @@ fi
 if test "x$enable_dependency_tracking" != xno; then
   am_depcomp="$ac_aux_dir/depcomp"
   AMDEPBACKSLASH='\'
+  am__nodep='_no'
 fi
  if test "x$enable_dependency_tracking" != xno; then
   AMDEP_TRUE=
@@ -4115,6 +4123,7 @@ else
   # instance it was reported that on HP-UX the gcc test will end up
   # making a dummy file named `D' -- because `-MD' means `put the output
   # in D'.
+  rm -rf conftest.dir
   mkdir conftest.dir
   # Copy depcomp to subdir because otherwise we won't find it if we're
   # using a relative directory.
@@ -4174,7 +4183,7 @@ else
 	break
       fi
       ;;
-    msvisualcpp | msvcmsys)
+    msvc7 | msvc7msys | msvisualcpp | msvcmsys)
       # This compiler won't grok `-c -o', but also, the minuso test has
       # not run yet.  These depmodes are late enough in the game, and
       # so weak that their functioning should not be impacted.
@@ -4255,6 +4264,7 @@ else
   # instance it was reported that on HP-UX the gcc test will end up
   # making a dummy file named `D' -- because `-MD' means `put the output
   # in D'.
+  rm -rf conftest.dir
   mkdir conftest.dir
   # Copy depcomp to subdir because otherwise we won't find it if we're
   # using a relative directory.
@@ -4312,7 +4322,7 @@ else
 	break
       fi
       ;;
-    msvisualcpp | msvcmsys)
+    msvc7 | msvc7msys | msvisualcpp | msvcmsys)
       # This compiler won't grok `-c -o', but also, the minuso test has
       # not run yet.  These depmodes are late enough in the game, and
       # so weak that their functioning should not be impacted.
@@ -4501,8 +4511,8 @@ esac
 
 
 
-macro_version='2.4'
-macro_revision='1.3293'
+macro_version='2.4.2'
+macro_revision='1.3337'
 
 
 
@@ -6842,7 +6852,14 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
 	    LD="${LD-ld} -m elf_i386_fbsd"
 	    ;;
 	  x86_64-*linux*)
-	    LD="${LD-ld} -m elf_i386"
+	    case `/usr/bin/file conftest.o` in
+	      *x86-64*)
+	         LD="${LD-ld} -m elf32_x86_64"
+	         ;;
+	      *)
+	         LD="${LD-ld} -m elf_i386"
+	         ;;
+	    esac
 	    ;;
 	  ppc64-*linux*|powerpc64-*linux*)
 	    LD="${LD-ld} -m elf32ppclinux"
@@ -8413,6 +8430,10 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 
 
+## CAVEAT EMPTOR:
+## There is no encapsulation within the following macros, do not change
+## the running order or otherwise move them around unless you know exactly
+## what you are doing...
 if test -n "$compiler"; then
 
 lt_prog_compiler_no_builtin_flag=
@@ -10963,14 +10984,10 @@ fi
   # before this can be enabled.
   hardcode_into_libs=yes
 
-  # Add ABI-specific directories to the system library path.
-  sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib"
-
   # Append ld.so.conf contents to the search path
   if test -f /etc/ld.so.conf; then
     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s 2>/dev/null", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;/^[	 ]*hwcap[	 ]/d;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;s/"//g;/^$/d' | tr '\n' ' '`
-    sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec $lt_ld_extra"
-
+    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
   fi
 
   # We used to test for /lib/ld.so.1 and disable shared libraries on
@@ -12015,7 +12032,7 @@ $as_echo "$ax_cv_c_compiler_vendor" >&6; }
 
 # Check whether --enable-portable-binary was given.
 if test "${enable_portable_binary+set}" = set; then :
-  enableval=$enable_portable_binary; acx_maxopt_portable=$withval
+  enableval=$enable_portable_binary; acx_maxopt_portable=$enableval
 else
   acx_maxopt_portable=no
 fi
@@ -12858,6 +12875,28 @@ fi
 
 fi
 
+if ${CFLAGS+:} false; then :
+  case " $CFLAGS " in
+    *"  "*)
+      { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS already contains "; } >&5
+  (: CFLAGS already contains ) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+      ;;
+    *)
+      { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS=\"\$CFLAGS \""; } >&5
+  (: CFLAGS="$CFLAGS ") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+      CFLAGS="$CFLAGS "
+      ;;
+   esac
+else
+  CFLAGS=""
+fi
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -12894,6 +12933,7 @@ CFLAGS="$ac_save_CFLAGS"
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_cflags_warn_all" >&5
 $as_echo "$ac_cv_cflags_warn_all" >&6; }
+
 case ".$ac_cv_cflags_warn_all" in
      .ok|.ok,*)  ;;
    .|.no|.no,*)  ;;
@@ -13132,6 +13172,10 @@ fi
 
 TARGETDIR="unknown"
 case "$host" in
+  aarch64*-*-*)
+	TARGET=AARCH64; TARGETDIR=aarch64
+	;;
+
   alpha*-*-*)
 	TARGET=ALPHA; TARGETDIR=alpha;
 	# Support 128-bit long double, changeable via command-line switch.
@@ -13265,6 +13309,10 @@ case "$host" in
   sparc*-*-*)
 	TARGET=SPARC; TARGETDIR=sparc
 	;;
+
+  tile*-*)
+        TARGET=TILE; TARGETDIR=tile
+        ;;
 
   x86_64-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
@@ -13431,6 +13479,14 @@ else
   POWERPC_FREEBSD_FALSE=
 fi
 
+ if test x$TARGET = xAARCH64; then
+  AARCH64_TRUE=
+  AARCH64_FALSE='#'
+else
+  AARCH64_TRUE='#'
+  AARCH64_FALSE=
+fi
+
  if test x$TARGET = xARM; then
   ARM_TRUE=
   ARM_FALSE='#'
@@ -13517,6 +13573,14 @@ fi
 else
   PA64_HPUX_TRUE='#'
   PA64_HPUX_FALSE=
+fi
+
+ if test x$TARGET = xTILE; then
+  TILE_TRUE=
+  TILE_FALSE='#'
+else
+  TILE_TRUE='#'
+  TILE_FALSE=
 fi
 
 
@@ -14150,7 +14214,40 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
  esac
 
 
-GCC_AS_CFI_PSEUDO_OP
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler .cfi pseudo-op support" >&5
+$as_echo_n "checking assembler .cfi pseudo-op support... " >&6; }
+if ${gcc_cv_as_cfi_pseudo_op+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+    gcc_cv_as_cfi_pseudo_op=unknown
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+asm (".cfi_startproc\n\t.cfi_endproc");
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  gcc_cv_as_cfi_pseudo_op=yes
+else
+  gcc_cv_as_cfi_pseudo_op=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_as_cfi_pseudo_op" >&5
+$as_echo "$gcc_cv_as_cfi_pseudo_op" >&6; }
+ if test "x$gcc_cv_as_cfi_pseudo_op" = xyes; then
+
+$as_echo "#define HAVE_AS_CFI_PSEUDO_OP 1" >>confdefs.h
+
+ fi
+
 
 if test x$TARGET = xSPARC; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler and linker support unaligned pc related relocs" >&5
@@ -14376,6 +14473,16 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >>confdefs.h
     fi
 fi
 
+# On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC.
+# Check whether --enable-pax_emutramp was given.
+if test "${enable_pax_emutramp+set}" = set; then :
+  enableval=$enable_pax_emutramp; if test "$enable_pax_emutramp" = "yes"; then
+
+$as_echo "#define FFI_MMAP_EXEC_EMUTRAMP_PAX 1" >>confdefs.h
+
+  fi
+fi
+
 
 FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
@@ -14385,7 +14492,7 @@ case "$target" in
 $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
 
      ;;
-     *-apple-darwin1[10]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+     *-apple-darwin1* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
 
 $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
 
@@ -14786,6 +14893,10 @@ if test -z "${POWERPC_FREEBSD_TRUE}" && test -z "${POWERPC_FREEBSD_FALSE}"; then
   as_fn_error $? "conditional \"POWERPC_FREEBSD\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${AARCH64_TRUE}" && test -z "${AARCH64_FALSE}"; then
+  as_fn_error $? "conditional \"AARCH64\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${ARM_TRUE}" && test -z "${ARM_FALSE}"; then
   as_fn_error $? "conditional \"ARM\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -14828,6 +14939,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PA64_HPUX_TRUE}" && test -z "${PA64_HPUX_FALSE}"; then
   as_fn_error $? "conditional \"PA64_HPUX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${TILE_TRUE}" && test -z "${TILE_FALSE}"; then
+  as_fn_error $? "conditional \"TILE\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
