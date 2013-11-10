@@ -8,6 +8,9 @@
 
 #include <ffi.h>
 
+#include "perl_math_int64.h"
+#include "perl_math_int64.c"
+
 #ifdef _WIN32
 # include <windows.h>
 #else
@@ -44,6 +47,10 @@ typedef struct FFI_RAW_CALLBACK {
 void *_ffi_raw_get_type(char type) {
 	switch (type) {
 		case 'v': return &ffi_type_void;
+		case 'l': return &ffi_type_slong;
+		case 'L': return &ffi_type_ulong;
+		case 'x': return &ffi_type_sint64;
+		case 'X': return &ffi_type_uint64;
 		case 'i': return &ffi_type_sint32;
 		case 'I': return &ffi_type_uint32;
 		case 'z': return &ffi_type_sint16;
@@ -107,6 +114,10 @@ void _ffi_raw_cb_wrap(ffi_cif *cif, void *ret, void *args[], void *argp) {
 	for (i = 0; i < self -> argc; i++) {
 		switch (self -> args_types[i]) {
 			case 'v': break;
+			case 'l': FFI_PUSH_PARAM(long, newSViv)
+			case 'L': FFI_PUSH_PARAM(unsigned long, newSViv)
+			case 'x': FFI_PUSH_PARAM(long long int, newSVi64)
+			case 'X': FFI_PUSH_PARAM(unsigned long long int, newSVu64)
 			case 'i': FFI_PUSH_PARAM(int, newSViv)
 			case 'I': FFI_PUSH_PARAM(unsigned int, newSViv)
 			case 'c': FFI_PUSH_PARAM(char, newSViv)
@@ -129,6 +140,10 @@ void _ffi_raw_cb_wrap(ffi_cif *cif, void *ret, void *args[], void *argp) {
 
 	switch (self -> ret_type) {
 		case 'v': break;
+		case 'l': *(long *) ret = POPi; break;
+		case 'L': *(unsigned long *) ret = POPi; break;
+		case 'x': *(long long int *) ret = POPi; break;
+		case 'X': *(unsigned long long int *) ret = POPi; break;
 		case 'i': *(int *) ret = POPi; break;
 		case 'I': *(unsigned int *) ret = POPi; break;
 		case 'z': *(short *) ret = POPi; break;
@@ -147,6 +162,9 @@ void _ffi_raw_cb_wrap(ffi_cif *cif, void *ret, void *args[], void *argp) {
 }
 
 MODULE = FFI::Raw				PACKAGE = FFI::Raw
+
+BOOT:
+	PERL_MATH_INT64_LOAD_OR_CROAK;
 
 FFI_Raw_t *
 new(class, library, function, ret_type, ...)
@@ -189,7 +207,7 @@ new(class, library, function, ret_type, ...)
 		if ((error = dlerror()) != NULL)
 			Perl_croak(aTHX_ error);
 
-		ffi_raw -> fn   = dlsym(ffi_raw -> handle, function_name);
+		ffi_raw -> fn = dlsym(ffi_raw -> handle, function_name);
 
 		if ((error = dlerror()) != NULL)
 			Perl_croak(aTHX_ error);
@@ -272,6 +290,10 @@ call(self, ...)
 
 			switch (self -> args_types[i]) {
 				case 'v': break;
+				case 'l': FFI_SET_ARG(long, SvIV)
+				case 'L': FFI_SET_ARG(unsigned long, SvUV)
+				case 'x': FFI_SET_ARG(long long int, SvI64)
+				case 'X': FFI_SET_ARG(unsigned long long int, SvU64)
 				case 'i': FFI_SET_ARG(int, SvIV)
 				case 'I': FFI_SET_ARG(int, SvUV)
 				case 'z': FFI_SET_ARG(short, SvIV)
@@ -320,6 +342,10 @@ call(self, ...)
 				output = newSV(0);
 				break;
 			}
+			case 'l': FFI_CALL(long, newSViv)
+			case 'L': FFI_CALL(unsigned long, newSVuv)
+			case 'x': FFI_CALL(long long int, newSVi64)
+			case 'X': FFI_CALL(unsigned long long int, newSVu64)
 			case 'i': FFI_CALL(int, newSViv)
 			case 'I': FFI_CALL(int, newSVuv)
 			case 'z': FFI_CALL(short, newSViv)

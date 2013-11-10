@@ -1,3 +1,22 @@
+#include <limits.h>
+#include <stdint.h>
+
+extern long return_long() {
+	return LONG_MIN;
+}
+
+extern unsigned long return_ulong() {
+	return ULONG_MAX;
+}
+
+extern int64_t return_int64() {
+	return LLONG_MIN;
+}
+
+extern uint64_t return_uint64() {
+	return ULLONG_MAX;
+}
+
 extern int return_int() {
 	return 101;
 }

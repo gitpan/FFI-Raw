@@ -48,6 +48,11 @@ enum {
 
   FLAG_RETURNS_128BITS  = 1 << (31-27), /* cr6  */
 
+  FLAG_SYSV_SMST_R4     = 1 << (31-26), /* use r4 for FFI_SYSV 8 byte
+					   structs.  */
+  FLAG_SYSV_SMST_R3     = 1 << (31-25), /* use r3 for FFI_SYSV 4 byte
+					   structs.  */
+
   FLAG_ARG_NEEDS_COPY   = 1 << (31- 7),
 #ifndef __NO_FPRS__
   FLAG_FP_ARGUMENTS     = 1 << (31- 6), /* cr1.eq; specified by ABI */
@@ -127,6 +132,9 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
 
   int i;
   ffi_type **ptr;
+#ifndef __NO_FPRS__
+  double double_tmp;
+#endif
   union {
     void **v;
     char **c;
@@ -146,7 +154,6 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   gpr_base.u = stacktop.u - ASM_NEEDS_REGISTERS - NUM_GPR_ARG_REGISTERS;
   intarg_count = 0;
 #ifndef __NO_FPRS__
-  double double_tmp;
   fpr_base.d = gpr_base.d - NUM_FPR_ARG_REGISTERS;
   fparg_count = 0;
   copy_space.c = ((flags & FLAG_FP_ARGUMENTS) ? fpr_base.c : gpr_base.c);
@@ -367,7 +374,13 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   /* Check that we didn't overrun the stack...  */
   FFI_ASSERT (copy_space.c >= next_arg.c);
   FFI_ASSERT (gpr_base.u <= stacktop.u - ASM_NEEDS_REGISTERS);
+  /* The assert below is testing that the number of integer arguments agrees
+     with the number found in ffi_prep_cif_machdep().  However, intarg_count
+     is incremented whenever we place an FP arg on the stack, so account for
+     that before our assert test.  */
 #ifndef __NO_FPRS__
+  if (fparg_count > NUM_FPR_ARG_REGISTERS)
+    intarg_count -= fparg_count - NUM_FPR_ARG_REGISTERS;
   FFI_ASSERT (fpr_base.u
 	      <= stacktop.u - ASM_NEEDS_REGISTERS - NUM_GPR_ARG_REGISTERS);
 #endif
@@ -542,11 +555,12 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 	    {
 	      char *where = next_arg.c;
 
+#ifndef __LITTLE_ENDIAN__
 	      /* Structures with size less than eight bytes are passed
 		 left-padded.  */
 	      if ((*ptr)->size < 8)
 		where += 8 - (*ptr)->size;
-
+#endif
 	      memcpy (where, *p_argv.c, (*ptr)->size);
 	      next_arg.ul += words;
 	      if (next_arg.ul == gpr_end.ul)
@@ -664,9 +678,11 @@ ffi_prep_cif_machdep (ffi_cif *cif)
   switch (type)
     {
 #ifndef __NO_FPRS__
+#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
     case FFI_TYPE_LONGDOUBLE:
       flags |= FLAG_RETURNS_128BITS;
       /* Fall through.  */
+#endif
     case FFI_TYPE_DOUBLE:
       flags |= FLAG_RETURNS_64BITS;
       /* Fall through.  */
@@ -684,18 +700,35 @@ ffi_prep_cif_machdep (ffi_cif *cif)
       break;
 
     case FFI_TYPE_STRUCT:
-      /*
-       * The final SYSV ABI says that structures smaller or equal 8 bytes
-       * are returned in r3/r4. The FFI_GCC_SYSV ABI instead returns them
-       * in memory.
-       *
-       * NOTE: The assembly code can safely assume that it just needs to
-       *       store both r3 and r4 into a 8-byte word-aligned buffer, as
-       *       we allocate a temporary buffer in ffi_call() if this flag is
-       *       set.
-       */
-      if (cif->abi == FFI_SYSV && size <= 8)
-	flags |= FLAG_RETURNS_SMST;
+      if (cif->abi == FFI_SYSV)
+	{
+	  /* The final SYSV ABI says that structures smaller or equal 8 bytes
+	     are returned in r3/r4. The FFI_GCC_SYSV ABI instead returns them
+	     in memory.  */
+
+	  /* Treat structs with size <= 8 bytes.  */
+	  if (size <= 8)
+	    {
+	      flags |= FLAG_RETURNS_SMST;
+	      /* These structs are returned in r3. We pack the type and the
+		 precalculated shift value (needed in the sysv.S) into flags.
+		 The same applies for the structs returned in r3/r4.  */
+	      if (size <= 4)
+		{
+		  flags |= FLAG_SYSV_SMST_R3;
+		  flags |= 8 * (4 - size) << 8;
+		  break;
+		}
+	      /* These structs are returned in r3 and r4. See above.   */
+	      if  (size <= 8)
+		{
+		  flags |= FLAG_SYSV_SMST_R3 | FLAG_SYSV_SMST_R4;
+		  flags |= 8 * (8 - size) << 8;
+		  break;
+		}
+	    }
+	}
+
       intarg_count++;
       flags |= FLAG_RETVAL_REFERENCE;
       /* Fall through.  */
@@ -1206,6 +1239,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 
 	case FFI_TYPE_SINT8:
 	case FFI_TYPE_UINT8:
+#ifndef __LITTLE_ENDIAN__
 	  /* there are 8 gpr registers used to pass values */
 	  if (ng < 8)
 	    {
@@ -1219,9 +1253,11 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 	      pst++;
 	    }
 	  break;
+#endif
 
 	case FFI_TYPE_SINT16:
 	case FFI_TYPE_UINT16:
+#ifndef __LITTLE_ENDIAN__
 	  /* there are 8 gpr registers used to pass values */
 	  if (ng < 8)
 	    {
@@ -1235,6 +1271,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 	      pst++;
 	    }
 	  break;
+#endif
 
 	case FFI_TYPE_SINT32:
 	case FFI_TYPE_UINT32:
@@ -1365,21 +1402,27 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	{
 	case FFI_TYPE_SINT8:
 	case FFI_TYPE_UINT8:
+#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 7;
 	  pst++;
 	  break;
+#endif
 
 	case FFI_TYPE_SINT16:
 	case FFI_TYPE_UINT16:
+#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 6;
 	  pst++;
 	  break;
+#endif
 
 	case FFI_TYPE_SINT32:
 	case FFI_TYPE_UINT32:
+#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 4;
 	  pst++;
 	  break;
+#endif
 
 	case FFI_TYPE_SINT64:
 	case FFI_TYPE_UINT64:
@@ -1389,11 +1432,13 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	  break;
 
 	case FFI_TYPE_STRUCT:
+#ifndef __LITTLE_ENDIAN__
 	  /* Structures with size less than eight bytes are passed
 	     left-padded.  */
 	  if (arg_types[i]->size < 8)
 	    avalue[i] = (char *) pst + 8 - arg_types[i]->size;
 	  else
+#endif
 	    avalue[i] = pst;
 	  pst += (arg_types[i]->size + 7) / 8;
 	  break;

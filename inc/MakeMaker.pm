@@ -21,10 +21,11 @@ TEMPLATE
 	return $template.super();
 };
 
+my $ccflags = $Config::Config{ccflags} || '';
 override _build_WriteMakefile_args => sub {
 	return +{
 		%{ super() },
-		INC	=> '-I. -Ixs/libffi/include',
+		INC	=> '-I. -Ixs -Ixs/libffi/include',
 		OBJECT	=> '$(O_FILES) xs/libffi/.libs/libffi.a',
 		MYEXTLIB => 'xs/libffi/.libs/libffi.a',
 	}

@@ -7,7 +7,9 @@
 /* { dg-do run } */
 #include "ffitest.h"
 
+#include <stdlib.h>
 #include <float.h>
+#include <math.h>
 
 static float many(float f1,
 		  float f2,
@@ -30,7 +32,7 @@ static float many(float f1,
 	 (double) f11, (double) f12, (double) f13);
 #endif
 
-  return ((f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12) * f13);
+  return f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12+f13;
 }
 
 int main (void)
@@ -62,7 +64,7 @@ int main (void)
 	       fa[8], fa[9],
 	       fa[10],fa[11],fa[12]);
 
-    if (f - ff < FLT_EPSILON)
+    if (fabs(f - ff) < FLT_EPSILON)
       exit(0);
     else
       abort();

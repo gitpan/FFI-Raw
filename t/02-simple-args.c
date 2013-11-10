@@ -1,4 +1,42 @@
 #include <stdio.h>
+#include <limits.h>
+#include <stdint.h>
+
+extern void take_one_long(long x) {
+	if (x == LONG_MIN)
+		printf("ok - got passed long %ld\n", x);
+	else
+		printf("not ok - got passed long %ld\n", x);
+
+	fflush(stdout);
+}
+
+extern void take_one_ulong(unsigned long x) {
+	if (x == ULONG_MAX)
+		printf("ok - got passed ulong %lu\n", x);
+	else
+		printf("not ok - got passed ulong %lu\n", x);
+
+	fflush(stdout);
+}
+
+extern void take_one_int64(int64_t x) {
+	if (x == LLONG_MIN)
+		printf("ok - got passed int64 %lld\n", x);
+	else
+		printf("not ok - got passed int64 %lld\n", x);
+
+	fflush(stdout);
+}
+
+extern void take_one_uint64(uint64_t x) {
+	if (x == ULLONG_MAX)
+		printf("ok - got passed uint64 %llu\n", x);
+	else
+		printf("not ok - got passed uint64 %llu\n", x);
+
+	fflush(stdout);
+}
 
 extern void take_one_int(int x) {
 	if (x == 42)
