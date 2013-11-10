@@ -132,9 +132,6 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
 
   int i;
   ffi_type **ptr;
-#ifndef __NO_FPRS__
-  double double_tmp;
-#endif
   union {
     void **v;
     char **c;
@@ -154,6 +151,7 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   gpr_base.u = stacktop.u - ASM_NEEDS_REGISTERS - NUM_GPR_ARG_REGISTERS;
   intarg_count = 0;
 #ifndef __NO_FPRS__
+  double double_tmp;
   fpr_base.d = gpr_base.d - NUM_FPR_ARG_REGISTERS;
   fparg_count = 0;
   copy_space.c = ((flags & FLAG_FP_ARGUMENTS) ? fpr_base.c : gpr_base.c);
@@ -376,7 +374,7 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   FFI_ASSERT (gpr_base.u <= stacktop.u - ASM_NEEDS_REGISTERS);
   /* The assert below is testing that the number of integer arguments agrees
      with the number found in ffi_prep_cif_machdep().  However, intarg_count
-     is incremented whenever we place an FP arg on the stack, so account for
+     is incremeneted whenever we place an FP arg on the stack, so account for
      that before our assert test.  */
 #ifndef __NO_FPRS__
   if (fparg_count > NUM_FPR_ARG_REGISTERS)
@@ -555,12 +553,11 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 	    {
 	      char *where = next_arg.c;
 
-#ifndef __LITTLE_ENDIAN__
 	      /* Structures with size less than eight bytes are passed
 		 left-padded.  */
 	      if ((*ptr)->size < 8)
 		where += 8 - (*ptr)->size;
-#endif
+
 	      memcpy (where, *p_argv.c, (*ptr)->size);
 	      next_arg.ul += words;
 	      if (next_arg.ul == gpr_end.ul)
@@ -1239,7 +1236,6 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 
 	case FFI_TYPE_SINT8:
 	case FFI_TYPE_UINT8:
-#ifndef __LITTLE_ENDIAN__
 	  /* there are 8 gpr registers used to pass values */
 	  if (ng < 8)
 	    {
@@ -1253,11 +1249,9 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 	      pst++;
 	    }
 	  break;
-#endif
 
 	case FFI_TYPE_SINT16:
 	case FFI_TYPE_UINT16:
-#ifndef __LITTLE_ENDIAN__
 	  /* there are 8 gpr registers used to pass values */
 	  if (ng < 8)
 	    {
@@ -1271,7 +1265,6 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 	      pst++;
 	    }
 	  break;
-#endif
 
 	case FFI_TYPE_SINT32:
 	case FFI_TYPE_UINT32:
@@ -1402,27 +1395,21 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	{
 	case FFI_TYPE_SINT8:
 	case FFI_TYPE_UINT8:
-#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 7;
 	  pst++;
 	  break;
-#endif
 
 	case FFI_TYPE_SINT16:
 	case FFI_TYPE_UINT16:
-#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 6;
 	  pst++;
 	  break;
-#endif
 
 	case FFI_TYPE_SINT32:
 	case FFI_TYPE_UINT32:
-#ifndef __LITTLE_ENDIAN__
 	  avalue[i] = (char *) pst + 4;
 	  pst++;
 	  break;
-#endif
 
 	case FFI_TYPE_SINT64:
 	case FFI_TYPE_UINT64:
@@ -1432,13 +1419,11 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	  break;
 
 	case FFI_TYPE_STRUCT:
-#ifndef __LITTLE_ENDIAN__
 	  /* Structures with size less than eight bytes are passed
 	     left-padded.  */
 	  if (arg_types[i]->size < 8)
 	    avalue[i] = (char *) pst + 8 - arg_types[i]->size;
 	  else
-#endif
 	    avalue[i] = pst;
 	  pst += (arg_types[i]->size + 7) / 8;
 	  break;

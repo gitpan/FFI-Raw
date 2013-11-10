@@ -382,7 +382,7 @@ open_temp_exec_file_opts_next (void)
 }
 
 /* Return a file descriptor of a temporary zero-sized file in a
-   writable and executable filesystem.  */
+   writable and exexutable filesystem.  */
 static int
 open_temp_exec_file (void)
 {

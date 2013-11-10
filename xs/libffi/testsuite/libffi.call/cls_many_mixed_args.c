@@ -9,17 +9,17 @@
 #include <float.h>
 #include <math.h>
 
-#define NARGS 16
+#define NARGS 12
 
 static void cls_ret_double_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
 			      void* userdata __UNUSED__)
 {
   int i;
-  double r = 0;
+  double r;
   double t;
   for(i = 0; i < NARGS; i++)
     {
-    if(i == 4 || i == 9 || i == 11 || i == 13 || i == 15)
+    if(i == 8) 
       {
       t = *(long int *)args[i];
       CHECK(t == i+1);
@@ -33,9 +33,7 @@ static void cls_ret_double_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
     }
   *(double *)resp = r;
 }
-typedef double (*cls_ret_double)(double, double, double, double, long int,
-double, double, double, double, long int, double, long int, double, long int,
-double, long int);
+typedef double (*cls_ret_double)(double, double, double, double, double, double, double, double, long int, double, double, double);
 
 int main (void)
 {
@@ -45,11 +43,11 @@ int main (void)
   ffi_type * cl_arg_types[NARGS];
   double res;
   int i;
-  double expected = 64.9;
+  double expected = 15.9;
 
   for(i = 0; i < NARGS; i++)
     {
-    if(i == 4 || i == 9 || i == 11 || i == 13 || i == 15)
+    if(i == 8) 
       cl_arg_types[i] = &ffi_type_slong;
     else
       cl_arg_types[i] = &ffi_type_double;
@@ -61,8 +59,8 @@ int main (void)
 
   CHECK(ffi_prep_closure_loc(pcl, &cif, cls_ret_double_fn, NULL, code) == FFI_OK);
 
-  res = (((cls_ret_double)code))(0.1, 0.2, 0.3, 0.4, 5, 0.6, 0.7, 0.8, 0.9, 10,
-                                 1.1, 12, 1.3, 14, 1.5, 16);
+  res = (((cls_ret_double)code))(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 9,
+                                                                1.0, 1.1, 1.2);
   if (abs(res - expected) < FLT_EPSILON)
     exit(0);
   else
