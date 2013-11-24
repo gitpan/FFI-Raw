@@ -1,6 +1,6 @@
 package FFI::Raw::MemPtr;
 {
-  $FFI::Raw::MemPtr::VERSION = '0.20';
+  $FFI::Raw::MemPtr::VERSION = '0.21';
 }
 
 use strict;
@@ -12,7 +12,7 @@ FFI::Raw::MemPtr - FFI::Raw memory pointer type
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 DESCRIPTION
 
@@ -59,6 +59,13 @@ It can be called using FFI::Raw as follows:
     $take_one_struct -> ($arg);
 
 Which would print C<hello>.
+
+=head2 new_from_ptr( $ptr )
+
+Allocate a new C<FFI::Raw::MemPtr> pointing to the C<$ptr>, which can be either
+a C<FFI::Raw::MemPtr> or a pointer returned by another function.
+
+This is the C<FFI::Raw> equivalent of a pointer to a pointer.
 
 =head2 tostr( [$length] )
 

@@ -30,13 +30,12 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
   "INC" => "-I. -Ixs -Ixs/libffi/include",
-  "LIBS" => "-lpthread",
+  "LIBS" => "-pthread",
   "LICENSE" => "perl",
   "MYEXTLIB" => "xs/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
   "OBJECT" => "\$(O_FILES) xs/libffi/.libs/libffi.a",
   "PREREQ_PM" => {
-    "Math::Int64" => 0,
     "XSLoader" => 0,
     "overload" => 0,
     "strict" => 0,
@@ -52,7 +51,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.20",
+  "VERSION" => "0.21",
   "test" => {
     "TESTS" => "t/*.t"
   }

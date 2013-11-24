@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.20';
+  $FFI::Raw::VERSION = '0.21';
 }
 
 use strict;
@@ -22,7 +22,7 @@ FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 
@@ -158,7 +158,7 @@ sub ulong ()   { ord 'L' }
 
 =head2 FFI::Raw::int64
 
-Return a C<FFI::Raw> 64 bit integer type.
+Return a C<FFI::Raw> 64 bit integer type. This requires L<Math::Int64> to work.
 
 =cut
 
@@ -166,7 +166,8 @@ sub int64 ()   { ord 'x' }
 
 =head2 FFI::Raw::uint64
 
-Return a C<FFI::Raw> unsigned 64 bit integer type.
+Return a C<FFI::Raw> unsigned 64 bit integer type. This requires L<Math::Int64> 
+to work.
 
 =cut
 
