@@ -1,6 +1,6 @@
 package FFI::Raw::MemPtr;
 {
-  $FFI::Raw::MemPtr::VERSION = '0.21';
+  $FFI::Raw::MemPtr::VERSION = '0.22';
 }
 
 use strict;
@@ -12,7 +12,7 @@ FFI::Raw::MemPtr - FFI::Raw memory pointer type
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 DESCRIPTION
 
@@ -48,8 +48,8 @@ It can be called using FFI::Raw as follows:
 
     use FFI::Raw;
 
-    my $struct = pack('iZ', 42, 'hello');
-    my $arg = FFI::Raw::MemPtr -> new_from_buf($packed, 10);
+    my $packed = pack('ix![p]p', 42, 'hello');
+    my $arg = FFI::Raw::MemPtr -> new_from_buf($packed, length $packed);
 
     my $take_one_struct = FFI::Raw -> new(
       $shared, 'take_one_struct',

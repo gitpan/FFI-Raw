@@ -7,9 +7,7 @@ use CompileTest;
 
 my $test   = '01-argless';
 my $source = "./t/$test.c";
-my $shared = "./t/$test.so";
-
-CompileTest::compile($source, $shared);
+my $shared = CompileTest::compile($source);
 
 my $argless = FFI::Raw -> new($shared, 'argless', FFI::Raw::void);
 

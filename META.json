@@ -40,6 +40,7 @@
       },
       "test" : {
          "requires" : {
+            "ExtUtils::CBuilder" : "0",
             "File::Spec" : "0",
             "IO::Handle" : "0",
             "IPC::Open3" : "0",
@@ -63,7 +64,7 @@
          "web" : "https://github.com/ghedo/p5-FFI-Raw"
       }
    },
-   "version" : "0.21",
+   "version" : "0.22",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"

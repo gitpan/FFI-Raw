@@ -9,9 +9,7 @@ use CompileTest;
 
 my $test   = '04-pointers';
 my $source = "./t/$test.c";
-my $shared = "./t/$test.so";
-
-CompileTest::compile($source, $shared);
+my $shared = CompileTest::compile($source);
 
 my $get_test_ptr_size = FFI::Raw -> new(
 	$shared, 'get_test_ptr_size', FFI::Raw::int

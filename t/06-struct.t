@@ -7,11 +7,7 @@ use CompileTest;
 
 my $test   = '06-struct';
 my $source = "./t/$test.c";
-my $shared = "./t/$test.so";
-
-print "1..7\n";
-
-CompileTest::compile($source, $shared);
+my $shared = CompileTest::compile($source);
 
 my $int_arg = 42;
 my $str_arg = "hello";
@@ -44,3 +40,5 @@ my ($int, $str) = unpack('ix![p]p', $arg -> tostr(length $packed));
 
 print "ok - got passed int 42\n" if $int == 42;
 print "ok - str\n" if $str eq 'hello';
+
+print "1..7\n";
