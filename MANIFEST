@@ -52,7 +52,6 @@ xs/libffi/Makefile.in
 xs/libffi/README
 xs/libffi/acinclude.m4
 xs/libffi/aclocal.m4
-xs/libffi/build-ios.sh
 xs/libffi/compile
 xs/libffi/config.guess
 xs/libffi/config.sub
@@ -105,6 +104,9 @@ xs/libffi/src/aarch64/sysv.S
 xs/libffi/src/alpha/ffi.c
 xs/libffi/src/alpha/ffitarget.h
 xs/libffi/src/alpha/osf.S
+xs/libffi/src/arc/arcompact.S
+xs/libffi/src/arc/ffi.c
+xs/libffi/src/arc/ffitarget.h
 xs/libffi/src/arm/ffi.c
 xs/libffi/src/arm/ffitarget.h
 xs/libffi/src/arm/gentramp.sh
@@ -136,6 +138,9 @@ xs/libffi/src/m32r/sysv.S
 xs/libffi/src/m68k/ffi.c
 xs/libffi/src/m68k/ffitarget.h
 xs/libffi/src/m68k/sysv.S
+xs/libffi/src/m88k/ffi.c
+xs/libffi/src/m88k/ffitarget.h
+xs/libffi/src/m88k/obsd.S
 xs/libffi/src/metag/ffi.c
 xs/libffi/src/metag/ffitarget.h
 xs/libffi/src/metag/sysv.S
@@ -149,6 +154,9 @@ xs/libffi/src/mips/o32.S
 xs/libffi/src/moxie/eabi.S
 xs/libffi/src/moxie/ffi.c
 xs/libffi/src/moxie/ffitarget.h
+xs/libffi/src/nios2/ffi.c
+xs/libffi/src/nios2/ffitarget.h
+xs/libffi/src/nios2/sysv.S
 xs/libffi/src/pa/ffi.c
 xs/libffi/src/pa/ffitarget.h
 xs/libffi/src/pa/hpux32.S
@@ -160,6 +168,9 @@ xs/libffi/src/powerpc/darwin.S
 xs/libffi/src/powerpc/darwin_closure.S
 xs/libffi/src/powerpc/ffi.c
 xs/libffi/src/powerpc/ffi_darwin.c
+xs/libffi/src/powerpc/ffi_linux64.c
+xs/libffi/src/powerpc/ffi_powerpc.h
+xs/libffi/src/powerpc/ffi_sysv.c
 xs/libffi/src/powerpc/ffitarget.h
 xs/libffi/src/powerpc/linux64.S
 xs/libffi/src/powerpc/linux64_closure.S
@@ -184,6 +195,9 @@ xs/libffi/src/tile/ffi.c
 xs/libffi/src/tile/ffitarget.h
 xs/libffi/src/tile/tile.S
 xs/libffi/src/types.c
+xs/libffi/src/vax/elfbsd.S
+xs/libffi/src/vax/ffi.c
+xs/libffi/src/vax/ffitarget.h
 xs/libffi/src/x86/darwin.S
 xs/libffi/src/x86/darwin64.S
 xs/libffi/src/x86/ffi.c
@@ -257,6 +271,7 @@ xs/libffi/testsuite/libffi.call/cls_float.c
 xs/libffi/testsuite/libffi.call/cls_longdouble.c
 xs/libffi/testsuite/libffi.call/cls_longdouble_va.c
 xs/libffi/testsuite/libffi.call/cls_many_mixed_args.c
+xs/libffi/testsuite/libffi.call/cls_many_mixed_float_double.c
 xs/libffi/testsuite/libffi.call/cls_multi_schar.c
 xs/libffi/testsuite/libffi.call/cls_multi_sshort.c
 xs/libffi/testsuite/libffi.call/cls_multi_sshortchar.c
@@ -294,6 +309,7 @@ xs/libffi/testsuite/libffi.call/many.c
 xs/libffi/testsuite/libffi.call/many2.c
 xs/libffi/testsuite/libffi.call/many2_win32.c
 xs/libffi/testsuite/libffi.call/many_double.c
+xs/libffi/testsuite/libffi.call/many_mixed.c
 xs/libffi/testsuite/libffi.call/many_win32.c
 xs/libffi/testsuite/libffi.call/negint.c
 xs/libffi/testsuite/libffi.call/nested_struct.c

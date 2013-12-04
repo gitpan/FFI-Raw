@@ -3,8 +3,8 @@
              Copyright (c) 2011  Anthony Green
              Copyright (c) 2008, 2010  Red Hat, Inc.
              Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
-             
-   x86-64 Foreign Function Interface 
+
+   x86-64 Foreign Function Interface
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -39,6 +39,7 @@
 #define MAX_SSE_REGS 8
 
 #if defined(__INTEL_COMPILER)
+#include "xmmintrin.h"
 #define UINT128 __m128
 #else
 #if defined(__SUNPRO_C)
@@ -60,7 +61,7 @@ struct register_args
 {
   /* Registers for argument passing.  */
   UINT64 gpr[MAX_GPR_REGS];
-  union big_int_union sse[MAX_SSE_REGS]; 
+  union big_int_union sse[MAX_SSE_REGS];
 };
 
 extern void ffi_call_unix64 (void *args, unsigned long bytes, unsigned flags,
@@ -167,7 +168,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
     case FFI_TYPE_SINT64:
     case FFI_TYPE_POINTER:
       {
-	int size = byte_offset + type->size;
+	size_t size = byte_offset + type->size;
 
 	if (size <= 4)
 	  {
@@ -209,8 +210,8 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
     case FFI_TYPE_STRUCT:
       {
 	const int UNITS_PER_WORD = 8;
-	int words = (type->size + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
-	ffi_type **ptr; 
+	int words = ((int)type->size + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
+	ffi_type **ptr;
 	int i;
 	enum x86_64_reg_class subclasses[MAX_CLASSES];
 
@@ -241,7 +242,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
 	      return 0;
 	    for (i = 0; i < num; i++)
 	      {
-		int pos = byte_offset / 8;
+		size_t pos = byte_offset / 8;
 		classes[i + pos] =
 		  merge_classes (subclasses[i], classes[i + pos]);
 	      }
@@ -410,7 +411,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
   if (ssecount)
     flags |= 1 << 11;
   cif->flags = flags;
-  cif->bytes = ALIGN (bytes, 8);
+  cif->bytes = (unsigned)ALIGN (bytes, 8);
 
   return FFI_OK;
 }
@@ -606,7 +607,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
 
   avn = cif->nargs;
   arg_types = cif->arg_types;
-  
+
   for (i = 0; i < avn; ++i)
     {
       enum x86_64_reg_class classes[MAX_CLASSES];

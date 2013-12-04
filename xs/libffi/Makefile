@@ -3,23 +3,51 @@
 
 
 
-am__make_dryrun = \
-  { \
-    am__dry=no; \
+am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
+am__make_running_with_option = \
+  case $${target_option-} in \
+      ?) ;; \
+      *) echo "am__make_running_with_option: internal error: invalid" \
+              "target option '$${target_option-}' specified" >&2; \
+         exit 1;; \
+  esac; \
+  has_opt=no; \
+  sane_makeflags=$$MAKEFLAGS; \
+  if $(am__is_gnu_make); then \
+    sane_makeflags=$$MFLAGS; \
+  else \
     case $$MAKEFLAGS in \
       *\\[\ \	]*) \
-        echo 'am--echo: ; @echo "AM"  OK' | $(MAKE) -f - 2>/dev/null \
-          | grep '^AM OK$$' >/dev/null || am__dry=yes;; \
-      *) \
-        for am__flg in $$MAKEFLAGS; do \
-          case $$am__flg in \
-            *=*|--*) ;; \
-            *n*) am__dry=yes; break;; \
-          esac; \
-        done;; \
+        bs=\\; \
+        sane_makeflags=`printf '%s\n' "$$MAKEFLAGS" \
+          | sed "s/$$bs$$bs[$$bs $$bs	]*//g"`;; \
     esac; \
-    test $$am__dry = yes; \
-  }
+  fi; \
+  skip_next=no; \
+  strip_trailopt () \
+  { \
+    flg=`printf '%s\n' "$$flg" | sed "s/$$1.*$$//"`; \
+  }; \
+  for flg in $$sane_makeflags; do \
+    test $$skip_next = yes && { skip_next=no; continue; }; \
+    case $$flg in \
+      *=*|--*) continue;; \
+        -*I) strip_trailopt 'I'; skip_next=yes;; \
+      -*I?*) strip_trailopt 'I';; \
+        -*O) strip_trailopt 'O'; skip_next=yes;; \
+      -*O?*) strip_trailopt 'O';; \
+        -*l) strip_trailopt 'l'; skip_next=yes;; \
+      -*l?*) strip_trailopt 'l';; \
+      -[dEDm]) skip_next=yes;; \
+      -[JT]) skip_next=yes;; \
+    esac; \
+    case $$flg in \
+      *$$target_option*) has_opt=yes; break;; \
+    esac; \
+  done; \
+  test $$has_opt = yes
+am__make_dryrun = (target_option=n; $(am__make_running_with_option))
+am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
 pkgdatadir = $(datadir)/libffi
 pkgincludedir = $(includedir)/libffi
 pkglibdir = $(libdir)/libffi
@@ -39,14 +67,14 @@ POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
 target_triplet = x86_64-unknown-linux-gnu
-am__append_27 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
+am__append_30 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
- $(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
- $(srcdir)/doc/version.texi $(srcdir)/fficonfig.h.in \
- $(srcdir)/libffi.pc.in $(top_srcdir)/configure ChangeLog \
- compile config.guess config.sub depcomp install-sh ltmain.sh \
- mdate-sh missing texinfo.tex
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+ $(top_srcdir)/configure $(am__configure_deps) \
+ $(srcdir)/fficonfig.h.in $(srcdir)/libffi.pc.in depcomp \
+ mdate-sh $(srcdir)/doc/version.texi $(srcdir)/doc/stamp-vti \
+ texinfo.tex ChangeLog README compile config.guess config.sub \
+ install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
  $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -104,7 +132,7 @@ libffi_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libffi_la_OBJECTS = src/prep_cif.lo src/types.lo src/raw_api.lo \
  src/java_raw_api.lo src/closures.lo
-am__objects_27 = src/x86/ffi64.lo src/x86/unix64.lo \
+am__objects_30 = src/x86/ffi64.lo src/x86/unix64.lo \
  src/x86/ffi.lo src/x86/sysv.lo
 nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  $(am__objects_3) $(am__objects_4) $(am__objects_5) \
@@ -117,17 +145,22 @@ nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  $(am__objects_24) $(am__objects_25) $(am__objects_26) \
  $(am__objects_27) $(am__objects_28) $(am__objects_29) \
  $(am__objects_30) $(am__objects_31) $(am__objects_32) \
- $(am__objects_33) $(am__objects_34)
+ $(am__objects_33) $(am__objects_34) $(am__objects_35) \
+ $(am__objects_36) $(am__objects_37) $(am__objects_38)
 libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
  $(nodist_libffi_la_OBJECTS)
-libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+libffi_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
  $(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
  $(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
 libffi_convenience_la_LIBADD =
-am__objects_35 = src/prep_cif.lo src/types.lo src/raw_api.lo \
+am__objects_39 = src/prep_cif.lo src/types.lo src/raw_api.lo \
  src/java_raw_api.lo src/closures.lo
-am_libffi_convenience_la_OBJECTS = $(am__objects_35)
-am__objects_36 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+am_libffi_convenience_la_OBJECTS = $(am__objects_39)
+am__objects_40 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
  $(am__objects_4) $(am__objects_5) $(am__objects_6) \
  $(am__objects_7) $(am__objects_8) $(am__objects_9) \
  $(am__objects_10) $(am__objects_11) $(am__objects_12) \
@@ -138,32 +171,87 @@ am__objects_36 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
  $(am__objects_25) $(am__objects_26) $(am__objects_27) \
  $(am__objects_28) $(am__objects_29) $(am__objects_30) \
  $(am__objects_31) $(am__objects_32) $(am__objects_33) \
- $(am__objects_34)
-nodist_libffi_convenience_la_OBJECTS = $(am__objects_36)
+ $(am__objects_34) $(am__objects_35) $(am__objects_36) \
+ $(am__objects_37) $(am__objects_38)
+nodist_libffi_convenience_la_OBJECTS = $(am__objects_40)
 libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  $(nodist_libffi_convenience_la_OBJECTS)
+AM_V_P = $(am__v_P_$(V))
+am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
  $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
-LTCPPASCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
- --mode=compile $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
- $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
+LTCPPASCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+ $(LIBTOOLFLAGS) --mode=compile $(CCAS) $(DEFS) \
+ $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+ $(AM_CCASFLAGS) $(CCASFLAGS)
+AM_V_CPPAS = $(am__v_CPPAS_$(V))
+am__v_CPPAS_ = $(am__v_CPPAS_$(AM_DEFAULT_VERBOSITY))
+am__v_CPPAS_0 = @echo "  CPPAS   " $@;
+am__v_CPPAS_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
  $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
- --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
- $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+ $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+ $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
- --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
- $(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ $(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+ $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 SOURCES = $(libffi_la_SOURCES) $(nodist_libffi_la_SOURCES) \
  $(libffi_convenience_la_SOURCES) \
  $(nodist_libffi_convenience_la_SOURCES)
 DIST_SOURCES = $(libffi_la_SOURCES) $(libffi_convenience_la_SOURCES)
+AM_V_DVIPS = $(am__v_DVIPS_$(V))
+am__v_DVIPS_ = $(am__v_DVIPS_$(AM_DEFAULT_VERBOSITY))
+am__v_DVIPS_0 = @echo "  DVIPS   " $@;
+am__v_DVIPS_1 = 
+AM_V_MAKEINFO = $(am__v_MAKEINFO_$(V))
+am__v_MAKEINFO_ = $(am__v_MAKEINFO_$(AM_DEFAULT_VERBOSITY))
+am__v_MAKEINFO_0 = @echo "  MAKEINFO" $@;
+am__v_MAKEINFO_1 = 
+AM_V_INFOHTML = $(am__v_INFOHTML_$(V))
+am__v_INFOHTML_ = $(am__v_INFOHTML_$(AM_DEFAULT_VERBOSITY))
+am__v_INFOHTML_0 = @echo "  INFOHTML" $@;
+am__v_INFOHTML_1 = 
+AM_V_TEXI2DVI = $(am__v_TEXI2DVI_$(V))
+am__v_TEXI2DVI_ = $(am__v_TEXI2DVI_$(AM_DEFAULT_VERBOSITY))
+am__v_TEXI2DVI_0 = @echo "  TEXI2DVI" $@;
+am__v_TEXI2DVI_1 = 
+AM_V_TEXI2PDF = $(am__v_TEXI2PDF_$(V))
+am__v_TEXI2PDF_ = $(am__v_TEXI2PDF_$(AM_DEFAULT_VERBOSITY))
+am__v_TEXI2PDF_0 = @echo "  TEXI2PDF" $@;
+am__v_TEXI2PDF_1 = 
+AM_V_texinfo = $(am__v_texinfo_$(V))
+am__v_texinfo_ = $(am__v_texinfo_$(AM_DEFAULT_VERBOSITY))
+am__v_texinfo_0 = -q
+am__v_texinfo_1 = 
+AM_V_texidevnull = $(am__v_texidevnull_$(V))
+am__v_texidevnull_ = $(am__v_texidevnull_$(AM_DEFAULT_VERBOSITY))
+am__v_texidevnull_0 = > /dev/null
+am__v_texidevnull_1 = 
 INFO_DEPS = $(srcdir)/doc/libffi.info
 am__TEXINFO_TEX_DIR = $(srcdir)
 DVIS = doc/libffi.dvi
@@ -176,13 +264,14 @@ TEXI2PDF = $(TEXI2DVI) --pdf --batch
 MAKEINFOHTML = $(MAKEINFO) --html
 AM_MAKEINFOHTMLFLAGS = $(AM_MAKEINFOFLAGS)
 DVIPS = dvips
-RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
- html-recursive info-recursive install-data-recursive \
- install-dvi-recursive install-exec-recursive \
- install-html-recursive install-info-recursive \
- install-pdf-recursive install-ps-recursive install-recursive \
- installcheck-recursive installdirs-recursive pdf-recursive \
- ps-recursive uninstall-recursive
+RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
+ ctags-recursive dvi-recursive html-recursive info-recursive \
+ install-data-recursive install-dvi-recursive \
+ install-exec-recursive install-html-recursive \
+ install-info-recursive install-pdf-recursive \
+ install-ps-recursive install-recursive installcheck-recursive \
+ installdirs-recursive pdf-recursive ps-recursive \
+ tags-recursive uninstall-recursive
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -191,9 +280,24 @@ am__can_run_installinfo = \
 DATA = $(pkgconfig_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
-AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
- $(RECURSIVE_CLEAN_TARGETS:-recursive=) tags TAGS ctags CTAGS \
+am__recursive_targets = \
+  $(RECURSIVE_TARGETS) \
+  $(RECURSIVE_CLEAN_TARGETS) \
+  $(am__extra_recursive_targets)
+AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
  cscope distdir dist dist-all distcheck
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+ $(LISP)fficonfig.h.in
+am__uniquify_input = $(AWK) '\
+  BEGIN { nonempty = 0; } \
+  { items[$$0] = 1; nonempty = 1; } \
+  END { if (nonempty) { for (i in items) print i; }; } \
+'
+am__define_uniq_tagged_files = \
+  list='$(am__tagged_files)'; \
+  unique=`for i in $$list; do \
+    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+  done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
@@ -240,15 +344,16 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing --run aclocal-1.12
+ACLOCAL = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing aclocal-1.13
 ALLOCA = 
 AMTAR = $${TAR-tar}
+AM_DEFAULT_VERBOSITY = 1
 AM_LTLDFLAGS = 
 AM_RUNTESTFLAGS = 
 AR = ar
-AUTOCONF = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing --run automake-1.12
+AUTOCONF = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing autoconf
+AUTOHEADER = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing autoheader
+AUTOMAKE = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing automake-1.13
 AWK = mawk
 CC = gcc
 CCAS = gcc
@@ -273,6 +378,7 @@ FFI_EXEC_TRAMPOLINE_TABLE = 0
 FGREP = /bin/grep -F
 GREP = /bin/grep
 HAVE_LONG_DOUBLE = 1
+HAVE_LONG_DOUBLE_VARIANT = 0
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -287,7 +393,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 MAINT = #
-MAKEINFO = ${SHELL} /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/missing --run makeinfo
+MAKEINFO = 
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
@@ -299,10 +405,10 @@ OTOOL64 =
 PACKAGE = libffi
 PACKAGE_BUGREPORT = http://github.com/atgreen/libffi/issues
 PACKAGE_NAME = libffi
-PACKAGE_STRING = libffi 3.0.13
+PACKAGE_STRING = libffi 3.0.14-rc0
 PACKAGE_TARNAME = libffi
 PACKAGE_URL = 
-PACKAGE_VERSION = 3.0.13
+PACKAGE_VERSION = 3.0.14-rc0
 PATH_SEPARATOR = :
 PRTDIAG = 
 RANLIB = ranlib
@@ -312,7 +418,7 @@ SHELL = /bin/bash
 STRIP = strip
 TARGET = X86_64
 TARGETDIR = x86
-VERSION = 3.0.13
+VERSION = 3.0.14-rc0
 abs_builddir = /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/x86_64-unknown-linux-gnu
 abs_srcdir = /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/x86_64-unknown-linux-gnu/..
 abs_top_builddir = /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/x86_64-unknown-linux-gnu
@@ -378,8 +484,9 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include testsuite man
 EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
   src/aarch64/ffi.c src/aarch64/ffitarget.h src/aarch64/sysv.S	\
-  build-ios.sh src/alpha/ffi.c src/alpha/osf.S			\
-  src/alpha/ffitarget.h src/arm/ffi.c src/arm/sysv.S		\
+  src/alpha/ffi.c src/alpha/osf.S			\
+  src/alpha/ffitarget.h src/arc/ffi.c src/arc/arcompact.S	\
+  src/arc/ffitarget.h src/arm/ffi.c src/arm/sysv.S		\
   src/arm/ffitarget.h src/avr32/ffi.c src/avr32/sysv.S		\
   src/avr32/ffitarget.h src/cris/ffi.c src/cris/sysv.S		\
   src/cris/ffitarget.h src/ia64/ffi.c src/ia64/ffitarget.h	\
@@ -389,8 +496,12 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
   src/moxie/ffitarget.h src/moxie/eabi.S src/mips/ffitarget.h	\
   src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h		\
   src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h		\
+  src/m88k/ffi.c src/m88k/obsd.S src/m88k/ffitarget.h		\
   src/microblaze/ffi.c src/microblaze/sysv.S			\
-  src/microblaze/ffitarget.h src/powerpc/ffi.c			\
+  src/microblaze/ffitarget.h					\
+  src/nios2/ffi.c src/nios2/ffitarget.h src/nios2/sysv.S		\
+  src/powerpc/ffi.c src/powerpc/ffi_powerpc.h			\
+  src/powerpc/ffi_sysv.c src/powerpc/ffi_linux64.c		\
   src/powerpc/sysv.S src/powerpc/linux64.S			\
   src/powerpc/linux64_closure.S src/powerpc/ppc_closure.S	\
   src/powerpc/asm.h src/powerpc/aix.S src/powerpc/darwin.S	\
@@ -408,6 +519,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
   src/bfin/ffitarget.h src/bfin/sysv.S src/frv/eabi.S		\
   src/frv/ffitarget.h src/dlmalloc.c src/tile/ffi.c		\
   src/tile/ffitarget.h src/tile/tile.S libtool-version		\
+  src/vax/ffi.c src/vax/ffitarget.h src/vax/elfbsd.S		\
   src/xtensa/ffitarget.h src/xtensa/ffi.c src/xtensa/sysv.S	\
   ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4		\
   m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
@@ -474,7 +586,8 @@ nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
  $(am__append_24) $(am__append_25) $(am__append_26) \
  $(am__append_27) $(am__append_28) $(am__append_29) \
  $(am__append_30) $(am__append_31) $(am__append_32) \
- $(am__append_33) $(am__append_34)
+ $(am__append_33) $(am__append_34) $(am__append_35) \
+ $(am__append_36) $(am__append_37) $(am__append_38)
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/libtool-ldflags $(LDFLAGS))
@@ -643,6 +756,7 @@ clean-noinstLTLIBRARIES:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
 install-toolexeclibLTLIBRARIES:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -1206,6 +1320,50 @@ src/m68k/sysv.lo:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/m88k/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/m88k/$(DEPDIR)/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/m88k/ffi.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/m88k/obsd.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
 src/moxie/$(am__dirstamp):
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -1294,6 +1452,50 @@ src/microblaze/sysv.lo:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/nios2/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/nios2/$(DEPDIR)/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/nios2/sysv.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/nios2/ffi.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
 src/powerpc/$(am__dirstamp):
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -1317,6 +1519,28 @@ src/powerpc/$(DEPDIR)/$(am__dirstamp):
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
 src/powerpc/ffi.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/powerpc/ffi_sysv.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/powerpc/ffi_linux64.lo:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
@@ -1460,6 +1684,50 @@ src/aarch64/sysv.lo:
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
 src/aarch64/ffi.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/arc/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/arc/$(DEPDIR)/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/arc/arcompact.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/arc/ffi.lo:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
@@ -1987,6 +2255,51 @@ src/metag/ffi.lo:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/vax/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/vax/$(DEPDIR)/$(am__dirstamp):
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/vax/elfbsd.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+src/vax/ffi.lo:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
 libffi.la:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -1998,6 +2311,7 @@ libffi.la:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
 libffi_convenience.la:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -2323,40 +2637,7 @@ uninstall-pkgconfigDATA:
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
 
-$(RECURSIVE_TARGETS) $(RECURSIVE_CLEAN_TARGETS):
-	@ HOST="$(HOST)" \
-	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
-	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
-	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
-	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
-	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
-	; test ".$$BUILD" = "." && BUILD="." \
-	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
-	; for i in $$BUILD ; do test ".$$i" = "." && continue \
-	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-tags-recursive tags-recursive-all:
-	@ HOST="$(HOST)" \
-	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
-	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
-	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
-	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
-	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
-	; test ".$$BUILD" = "." && BUILD="." \
-	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
-	; for i in $$BUILD ; do test ".$$i" = "." && continue \
-	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-ctags-recursive ctags-recursive-all:
-	@ HOST="$(HOST)" \
-	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
-	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
-	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
-	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
-	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
-	; test ".$$BUILD" = "." && BUILD="." \
-	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
-	; for i in $$BUILD ; do test ".$$i" = "." && continue \
-	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-cscopelist-recursive cscopelist-recursive-all:
+$(am__recursive_targets):
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
@@ -2390,8 +2671,19 @@ tags tags-all:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-
 TAGS:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
+tags-am tags-am-all:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
@@ -2413,7 +2705,19 @@ ctags ctags-all:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
 CTAGS:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+ctags-am ctags-am-all:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
@@ -2436,7 +2740,6 @@ GTAGS:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-
 cscope cscope-all:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -2448,7 +2751,6 @@ cscope cscope-all:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-
 clean-cscope clean-cscope-all:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -2460,7 +2762,6 @@ clean-cscope clean-cscope-all:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-
 cscope.files:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
@@ -2472,8 +2773,19 @@ cscope.files:
 	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
 	; for i in $$BUILD ; do test ".$$i" = "." && continue \
 	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
-
 cscopelist cscopelist-all:
+	@ HOST="$(HOST)" \
+	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
+	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \
+	; use=` basename "$@" -all `; n=` echo $$BUILD | wc -w ` \
+	; echo "MAKE $$HOST : $$n * $@"; if test "$$n" -eq "0" ; then : \
+	; BUILD=` grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' ` ; fi \
+	; test ".$$BUILD" = "." && BUILD="." \
+	; test "$$use" = "$@" && BUILD=` echo "$$BUILD" | tail -1 ` \
+	; for i in $$BUILD ; do test ".$$i" = "." && continue \
+	; (cd "$$i" && test ! -f configure && $(MAKE) $$use) || exit; done
+
+cscopelist-am cscopelist-am-all:
 	@ HOST="$(HOST)" \
 	; test ".$$HOST" = "." && HOST=` sh /home/ghedo/devel/cpan/p5-FFI-Raw/xs/libffi/config.guess ` \
 	; BUILD=` grep "^#### $$HOST " Makefile | sed -e 's/.*|//' ` \

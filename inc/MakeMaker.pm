@@ -11,7 +11,9 @@ override _build_MakeFile_PL_template => sub {
 sub MY::postamble {
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
-	cd xs/libffi && ./configure --disable-builddir --with-pic && $(MAKE)
+	cd xs/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
+
+.NOTPARALLEL:
 
 MAKE_LIBFFI
 }
@@ -26,7 +28,7 @@ override _build_WriteMakefile_args => sub {
 	return +{
 		%{ super() },
 		INC	=> '-I. -Ixs -Ixs/libffi/include',
-		LIBS	=> '-pthread',
+		CCFLAGS	=> '-pthread',
 		OBJECT	=> '$(O_FILES) xs/libffi/.libs/libffi.a',
 		MYEXTLIB => 'xs/libffi/.libs/libffi.a',
 	}

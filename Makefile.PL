@@ -1,7 +1,9 @@
 sub MY::postamble {
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
-	cd xs/libffi && ./configure --disable-builddir --with-pic && $(MAKE)
+	cd xs/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
+
+.NOTPARALLEL:
 
 MAKE_LIBFFI
 }
@@ -23,6 +25,7 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Perl bindings to the portable FFI library (libffi)",
   "AUTHOR" => "Alessandro Ghedini <alexbio\@cpan.org>",
   "BUILD_REQUIRES" => {},
+  "CCFLAGS" => "-pthread",
   "CONFIGURE_REQUIRES" => {
     "Devel::CheckLib" => 0,
     "ExtUtils::MakeMaker" => "6.30"
@@ -30,7 +33,6 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
   "INC" => "-I. -Ixs -Ixs/libffi/include",
-  "LIBS" => "-pthread",
   "LICENSE" => "perl",
   "MYEXTLIB" => "xs/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
@@ -52,7 +54,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.22",
+  "VERSION" => "0.23",
   "test" => {
     "TESTS" => "t/*.t"
   }

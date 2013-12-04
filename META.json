@@ -64,7 +64,7 @@
          "web" : "https://github.com/ghedo/p5-FFI-Raw"
       }
    },
-   "version" : "0.22",
+   "version" : "0.23",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -133,12 +133,12 @@
          {
             "class" : "Dist::Zilla::Plugin::GitHub::Meta",
             "name" : "@Filter/@GitHub/GitHub::Meta",
-            "version" : "0.35"
+            "version" : "0.36"
          },
          {
             "class" : "Dist::Zilla::Plugin::GitHub::Update",
             "name" : "@Filter/@GitHub/GitHub::Update",
-            "version" : "0.35"
+            "version" : "0.36"
          },
          {
             "class" : "Dist::Zilla::Plugin::Git::NextVersion",
