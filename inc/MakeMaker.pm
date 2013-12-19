@@ -9,6 +9,9 @@ override _build_MakeFile_PL_template => sub {
 
 	my $template  = <<'TEMPLATE';
 sub MY::postamble {
+  if ($^O eq 'MSWin32') {
+    return "\t$^X -MAlien::MSYS=msys_run -e \"chdir 'xs/libffi'; msys_run 'sh configure MAKEILFO=true --disable-builddir --with-pic'; msys_run 'make'\"\n\n";
+  }
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
 	cd xs/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
@@ -28,7 +31,7 @@ override _build_WriteMakefile_args => sub {
 	return +{
 		%{ super() },
 		INC	=> '-I. -Ixs -Ixs/libffi/include',
-		CCFLAGS	=> '-pthread',
+		LIBS	=> '-lpthread',
 		OBJECT	=> '$(O_FILES) xs/libffi/.libs/libffi.a',
 		MYEXTLIB => 'xs/libffi/.libs/libffi.a',
 	}

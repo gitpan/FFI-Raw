@@ -35,6 +35,8 @@ t/05-callbacks.c
 t/05-callbacks.t
 t/06-struct.c
 t/06-struct.t
+t/07-null.c
+t/07-null.t
 t/CompileTest.pm
 t/release-check-manifest.t
 t/release-pod-coverage.t
@@ -58,7 +60,6 @@ xs/libffi/config.sub
 xs/libffi/configure
 xs/libffi/configure.host
 xs/libffi/depcomp
-xs/libffi/doc/libffi.info
 xs/libffi/doc/libffi.texi
 xs/libffi/doc/stamp-vti
 xs/libffi/doc/version.texi

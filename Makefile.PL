@@ -1,4 +1,7 @@
 sub MY::postamble {
+  if ($^O eq 'MSWin32') {
+    return "\t$^X -MAlien::MSYS=msys_run -e \"chdir 'xs/libffi'; msys_run 'sh configure MAKEILFO=true --disable-builddir --with-pic'; msys_run 'make'\"\n\n";
+  }
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
 	cd xs/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
@@ -25,7 +28,6 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Perl bindings to the portable FFI library (libffi)",
   "AUTHOR" => "Alessandro Ghedini <alexbio\@cpan.org>",
   "BUILD_REQUIRES" => {},
-  "CCFLAGS" => "-pthread",
   "CONFIGURE_REQUIRES" => {
     "Devel::CheckLib" => 0,
     "ExtUtils::MakeMaker" => "6.30"
@@ -33,6 +35,7 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
   "INC" => "-I. -Ixs -Ixs/libffi/include",
+  "LIBS" => "-lpthread",
   "LICENSE" => "perl",
   "MYEXTLIB" => "xs/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
@@ -54,7 +57,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.23",
+  "VERSION" => "0.24",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -89,6 +92,11 @@ unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
 
 delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
   unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+if ( $^O eq 'MSWin32' ) {
+	$WriteMakefileArgs{PREREQ_PM}{'Alien::MSYS'} = '0';
+	$WriteMakefileArgs{PREREQ_PM}{'Alien::o2dll'} = '0';
+}
 
 WriteMakefile(%WriteMakefileArgs);
 

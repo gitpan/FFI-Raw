@@ -15,7 +15,7 @@ build_requires:
 configure_requires:
   Devel::CheckLib: 0
   ExtUtils::MakeMaker: 6.30
-dynamic_config: 0
+dynamic_config: 1
 generated_by: 'Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.132830'
 license: perl
 meta-spec:
@@ -33,7 +33,7 @@ resources:
   bugtracker: https://github.com/ghedo/p5-FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/ghedo/p5-FFI-Raw.git
-version: 0.23
+version: 0.24
 x_Dist_Zilla:
   perl:
     version: 5.018001
@@ -193,6 +193,13 @@ x_Dist_Zilla:
       class: Dist::Zilla::Plugin::PruneFiles
       name: PruneFiles
       version: 5.006
+    -
+      class: Dist::Zilla::Plugin::OSPrereqs
+      config:
+        Dist::Zilla::Plugin::OSPrereqs:
+          os: MSWin32
+      name: MSWin32
+      version: 0.003
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':InstallModules'

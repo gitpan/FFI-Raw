@@ -8,6 +8,10 @@
 
 #include <ffi.h>
 
+#ifdef __MINGW32__
+# include <stdint.h>
+#endif
+
 #include "perl_math_int64.h"
 #include "perl_math_int64.c"
 
@@ -190,12 +194,18 @@ new(class, library, function, ret_type, ...)
 
 		ffi_raw -> handle = LoadLibrary(library_name);
 
+		if (ffi_raw->handle == NULL)
+			Perl_croak(aTHX_ "library not found");
+
 		/*if ((error = GetLastError()) != NULL)
 			Perl_croak(aTHX_ error);*/
 
 		ffi_raw -> fn = GetProcAddress(
 			ffi_raw -> handle, function_name
 		);
+
+		if (ffi_raw -> fn == NULL)
+			Perl_croak(aTHX_ "function not found");
 
 		/*if ((error = GetLastError()) != NULL)
 			Perl_croak(aTHX_ error);*/
@@ -304,30 +314,42 @@ call(self, ...)
 				case 'd': FFI_SET_ARG(double, SvNV)
 				case 's': {
 					STRLEN l;
-					char **val; Newx(val, 1, char *);
-					*val = SvPV(arg, l);
+					char **val;
+
+					Newx(val, 1, char *);
+
+					if (SvOK(arg))
+						*val = SvPV(arg, l);
+					else
+						*val = NULL;
+
 					values[i] = val;
 					break;
 				}
 				case 'p': {
+					void **val;
+
+					Newx(val, 1, void *);
+
 					if (sv_derived_from(
 						arg, "FFI::Raw::MemPtr"
 					)) {
 						arg = SvRV(arg);
 					}
+
 					if (sv_derived_from(
 						arg, "FFI::Raw::Callback"
 					)) {
-						void **val;
-						Newx(val, 1, void *);
 						FFI_Raw_Callback_t *cb =
 							INT_TO_PTR(SvRV(arg));
 						*val = cb -> fn;
-						values[i] = val;
-						break;
-					}
+					} else if (SvOK(arg))
+						*val = INT_TO_PTR(arg);
+					else
+						*val = NULL;
 
-					FFI_SET_ARG(void *, INT_TO_PTR)
+					values[i] = val;
+					break;
 				}
 			}
 		}
@@ -365,7 +387,20 @@ call(self, ...)
 				output = newSVpv(result, 0);
 				break;
 			}
-			case 'p': FFI_CALL(void *, PTR_TO_INT)
+			case 'p': {
+				void *result;
+
+				ffi_call(
+					&self -> cif, self -> fn,
+					&result, values
+				);
+
+				if (result == NULL)
+					output = &PL_sv_undef;
+				else
+					output = PTR_TO_INT(result);
+				break;
+			}
 		}
 
 		for (i = 0; i < self -> argc; i++)
