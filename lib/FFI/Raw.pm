@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.24';
+  $FFI::Raw::VERSION = '0.25';
 }
 
 use strict;
@@ -9,9 +9,9 @@ use warnings;
 require XSLoader;
 XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
-use overload '&{}' => \&_call_deref;
+use overload '&{}' => \&coderef;
 
-sub _call_deref {
+sub coderef {
 	my $ffi = shift;
 	return sub { $ffi -> call(@_) };
 }
@@ -22,7 +22,7 @@ FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 SYNOPSIS
 
@@ -78,7 +78,11 @@ the object will work just like call():
     $cos -> call(2.0); # normal call() call
     $cos -> (2.0);     # dereference as CODE ref
 
-This works becasue FFI::Raw overloads the C<&{}> operator.
+This works because FFI::Raw overloads the C<&{}> operator.
+
+=head2 coderef( )
+
+Return a code reference of a given C<FFI::Raw>.
 
 =head1 SUBROUTINES
 

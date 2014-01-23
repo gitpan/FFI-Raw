@@ -12,6 +12,12 @@
 # include <stdint.h>
 #endif
 
+#ifdef _MSC_VER
+#include <stdlib.h>
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#endif
+
 #include "perl_math_int64.h"
 #include "perl_math_int64.c"
 
@@ -177,13 +183,14 @@ new(class, library, function, ret_type, ...)
 	SV *function
 	SV *ret_type
 
-	INIT:
+	PREINIT:
 		char *error;
 		ffi_status status;
 
+		FFI_Raw_t *ffi_raw;
+
 		const char *library_name, *function_name;
 
-		FFI_Raw_t *ffi_raw;
 	CODE:
 		Newx(ffi_raw, 1, FFI_Raw_t);
 
@@ -234,11 +241,12 @@ new_from_ptr(class, function, ret_type, ...)
 	SV *function
 	SV *ret_type
 
-	INIT:
+	PREINIT:
 		char *error;
 		ffi_status status;
 
 		FFI_Raw_t *ffi_raw;
+
 	CODE:
 		Newx(ffi_raw, 1, FFI_Raw_t);
 
@@ -250,21 +258,6 @@ new_from_ptr(class, function, ret_type, ...)
 		RETVAL = ffi_raw;
 
 	OUTPUT: RETVAL
-
-void
-DESTROY(self)
-	FFI_Raw_t *self
-
-	CODE:
-		if (self -> handle)
-#ifdef _WIN32
-		FreeLibrary(self -> handle);
-#else
-		dlclose(self -> handle);
-#endif
-		Safefree(self -> args_types);
-		Safefree(self -> args);
-		Safefree(self);
 
 #define FFI_SET_ARG(TYPE, FN) {			\
 	TYPE *val;				\
@@ -285,10 +278,12 @@ SV *
 call(self, ...)
 	FFI_Raw_t *self
 
-	INIT:
+	PREINIT:
 		int i;
+
 		SV *output;
 		void **values;
+
 	CODE:
 		if (self -> argc != (items - 1))
 			Perl_croak(aTHX_ "Wrong number of arguments");
@@ -326,13 +321,14 @@ call(self, ...)
 					values[i] = val;
 					break;
 				}
+
 				case 'p': {
 					void **val;
 
 					Newx(val, 1, void *);
 
 					if (sv_derived_from(
-						arg, "FFI::Raw::MemPtr"
+						arg, "FFI::Raw::Ptr"
 					)) {
 						arg = SvRV(arg);
 					}
@@ -364,6 +360,7 @@ call(self, ...)
 				output = newSV(0);
 				break;
 			}
+
 			case 'l': FFI_CALL(long, newSViv)
 			case 'L': FFI_CALL(unsigned long, newSVuv)
 			case 'x': FFI_CALL(long long int, newSVi64)
@@ -387,6 +384,7 @@ call(self, ...)
 				output = newSVpv(result, 0);
 				break;
 			}
+
 			case 'p': {
 				void *result;
 
@@ -411,6 +409,21 @@ call(self, ...)
 		RETVAL = output;
 
 	OUTPUT: RETVAL
+
+void
+DESTROY(self)
+	FFI_Raw_t *self
+
+	CODE:
+		if (self -> handle)
+#ifdef _WIN32
+		FreeLibrary(self -> handle);
+#else
+		dlclose(self -> handle);
+#endif
+		Safefree(self -> args_types);
+		Safefree(self -> args);
+		Safefree(self);
 
 INCLUDE: xs/MemPtr.xs
 INCLUDE: xs/Callback.xs

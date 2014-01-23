@@ -18,10 +18,12 @@ eg/string.pl
 eg/uuid.pl
 eg/zmq_client.pl
 eg/zmq_server.pl
+inc/MSYSConfigure.pm
 inc/MakeMaker.pm
 lib/FFI/Raw.pm
 lib/FFI/Raw/Callback.pm
 lib/FFI/Raw/MemPtr.pm
+lib/FFI/Raw/Ptr.pm
 t/00-compile.t
 t/01-argless.c
 t/01-argless.t
@@ -37,7 +39,11 @@ t/06-struct.c
 t/06-struct.t
 t/07-null.c
 t/07-null.t
+t/08-memptr.t
+t/09-opaque.c
+t/09-opaque.t
 t/CompileTest.pm
+t/ffi_test.h
 t/release-check-manifest.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t

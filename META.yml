@@ -5,11 +5,14 @@ author:
 build_requires:
   ExtUtils::CBuilder: 0
   File::Spec: 0
+  FindBin: 0
   IO::Handle: 0
   IPC::Open3: 0
   Math::BigInt: 0
   POSIX: 0
   Test::More: 0
+  Text::ParseWords: 0
+  base: 0
   bigint: 0
   lib: 0
 configure_requires:
@@ -33,10 +36,10 @@ resources:
   bugtracker: https://github.com/ghedo/p5-FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/ghedo/p5-FFI-Raw.git
-version: 0.24
+version: 0.25
 x_Dist_Zilla:
   perl:
-    version: 5.018001
+    version: 5.018002
   plugins:
     -
       class: Dist::Zilla::Plugin::GatherDir
