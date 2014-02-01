@@ -42,6 +42,9 @@ t/07-null.t
 t/08-memptr.t
 t/09-opaque.c
 t/09-opaque.t
+t/10-overload.c
+t/10-overload.t
+t/11-from-main.t
 t/CompileTest.pm
 t/ffi_test.h
 t/release-check-manifest.t

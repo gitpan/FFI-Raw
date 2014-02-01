@@ -1,10 +1,15 @@
 
 use Config;
+use Devel::CheckLib;
+
+my $use_system_ffi = check_lib(lib => "ffi", header => "ffi.h");
 
 sub MY::postamble {
   if ($^O eq 'MSWin32') {
     return "\t$^X -MAlien::MSYS=msys_run -Minc::MSYSConfigure -e \"configure(); msys_run 'make'\"\n\n";
   }
+
+  return if $use_system_ffi;
 
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
@@ -22,7 +27,7 @@ MAKE_LIBFFI
 use strict;
 use warnings;
 
-
+use 5.010;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -32,7 +37,6 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "Perl bindings to the portable FFI library (libffi)",
   "AUTHOR" => "Alessandro Ghedini <alexbio\@cpan.org>",
   "BUILD_REQUIRES" => {},
-  "CCFLAGS" => "-pthread",
   "CONFIGURE_REQUIRES" => {
     "Devel::CheckLib" => 0,
     "ExtUtils::MakeMaker" => "6.30"
@@ -40,7 +44,6 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
   "INC" => "-I. -Ixs -Ixs/libffi/include",
-  "LIBS" => "-lpthread",
   "LICENSE" => "perl",
   "MYEXTLIB" => "xs/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
@@ -65,19 +68,38 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.25",
+  "VERSION" => "0.26",
   "test" => {
     "TESTS" => "t/*.t"
   }
 );
+
+my @libs;
 
 if ($^O eq 'MSWin32' && $Config{cc} =~ /cl(\.exe)?$/) {
   for (@WriteMakefileArgs{'MYEXTLIB','OBJECT'}) {
     s/libffi.a/libffi.lib/;
   }
 
-  $WriteMakefileArgs{CCFLAGS} = "$Config::Config{ccflags} -DFFI_BUILDING",
+  $WriteMakefileArgs{CCFLAGS}   = "$Config{ccflags} -DFFI_BUILDING",
+  $WriteMakefileArgs{LDDLFLAGS} = "$Config{lddlflags} psapi.lib";
+
+} elsif ($^O =~ /^(MSWin32|cygwin)$/) {
+  push @libs, '-L/usr/lib/w32api' if ($^O eq 'cygwin');
+  push @libs, '-lpsapi';
 }
+
+if ($^O eq 'openbsd' && !$Config{usethreads}) {
+  $WriteMakefileArgs{MYEXTLIB} .= ' /usr/lib/libpthread.a';
+}
+
+if ($use_system_ffi) {
+  $WriteMakefileArgs{OBJECT} = '$(O_FILES)';
+  push @libs, '-lffi';
+  delete $WriteMakefileArgs{MYEXTLIB};
+}
+
+$WriteMakefileArgs{LIBS} = "@libs" if @libs;
 
 
 

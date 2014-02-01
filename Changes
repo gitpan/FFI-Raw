@@ -1,5 +1,15 @@
 Revision history for FFI-Raw
 
+0.26      2014-02-01 17:22:03 Europe/Rome
+
+ - Import FFI::Raw::Ptr in FFI::Raw to avoid a bug in perl < 5.10.1
+   (GH#23) (thanks, @plicease!)
+ - Require perl >= 5.10
+ - Add boolean override for FFI::Raw objects (GH#28) (thanks, @calid!)
+ - Fix build on non-threaded perl (like OpenBSD's) (GH#29) (thanks, @plicease!)
+ - Use system libffi if available (GH#30) (GH#32) (thanks, @plicease!)
+ - Allow resolving functions in the main program (GH#33) (thanks, @plicease!)
+
 0.25      2014-01-23 11:52:49 Europe/Rome
 
  - Fix build under MSWin32 64-bit (GH#17) (thanks, @plicease!)
@@ -7,6 +17,7 @@ Revision history for FFI-Raw
    (GH#18) (thanks, @klaus)
  - Add FFI::Raw::Ptr base class for pointer objects
    (GH#20) (GH#22) (thanks, @plicease!)
+ - Fix build under MS Visual C++ (GH#19) (thanks, @plicease!)
 
 0.24      2013-12-19 16:44:50 Europe/Rome
 

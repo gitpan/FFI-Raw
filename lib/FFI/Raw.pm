@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.25';
+  $FFI::Raw::VERSION = '0.26';
 }
 
 use strict;
@@ -9,11 +9,15 @@ use warnings;
 require XSLoader;
 XSLoader::load('FFI::Raw', $FFI::Raw::VERSION);
 
-use overload '&{}' => \&coderef;
+require FFI::Raw::Ptr;
 
-sub coderef {
+use overload
+	'&{}'  => \&coderef,
+	'bool' => \&_bool;
+
+sub _bool {
 	my $ffi = shift;
-	return sub { $ffi -> call(@_) };
+	return $ffi;
 }
 
 =head1 NAME
@@ -22,7 +26,7 @@ FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.25
+version 0.26
 
 =head1 SYNOPSIS
 
@@ -38,14 +42,14 @@ version 0.25
 
 =head1 DESCRIPTION
 
-B<FFI::Raw> provides a raw foreign function interface for Perl based on
-L<libffi|http://sourceware.org/libffi/>. It can access and call functions
-exported by shared libraries without the need to write C/XS code.
+B<FFI::Raw> provides a low-level foreign function interface (FFI) for Perl based
+on L<libffi|http://sourceware.org/libffi/>. In essence, it can access and call
+functions exported by shared libraries without the need to write C/XS code.
 
 Dynamic symbols can be automatically resolved at runtime so that the only
 information needed to use B<FFI::Raw> is the name (or path) of the target
-library, the name of the function to call and its signature (though it is
-also possible to pass a function pointer).
+library, the name of the function to call and its signature (though it is also
+possible to pass a function pointer obtained, for example, using L<DynaLoader>).
 
 Note that this module has nothing to do with L<FFI>.
 
@@ -56,21 +60,23 @@ Note that this module has nothing to do with L<FFI>.
 Create a new C<FFI::Raw> object. It loads C<$library>, finds the function
 C<$function> with return type C<$return_type> and creates a calling interface.
 
-This function takes also a variable number of types, representing the argument
+If C<$library> is C<undef> then the function is searched in the main program.
+
+This method also takes a variable number of types, representing the arguments
 of the wanted function.
 
 =head2 new_from_ptr( $function_ptr, $return_type [, $arg_type ...] )
 
 Create a new C<FFI::Raw> object from the C<$function_ptr> function pointer.
 
-This function takes also a variable number of types, representing the argument
+This method also takes a variable number of types, representing the arguments
 of the wanted function.
 
 =head2 call( [$arg ...] )
 
-Execute the C<FFI::Raw> function C<$self>. This function takes also a variable
-number of arguments, which are passed to the called function. The argument types
-must match the types passed to C<new>.
+Execute the C<FFI::Raw> function. This methoed also takes a variable number of
+arguments, which are passed to the called function. The argument types must
+match the types passed to C<new> (or C<new_from_ptr>).
 
 The C<FFI::Raw> object can be used as a CODE reference as well. Dereferencing
 the object will work just like call():
@@ -84,9 +90,16 @@ This works because FFI::Raw overloads the C<&{}> operator.
 
 Return a code reference of a given C<FFI::Raw>.
 
+=cut
+
+sub coderef {
+	my $ffi = shift;
+	return sub { $ffi -> call(@_) };
+}
+
 =head1 SUBROUTINES
 
-=head2 memptr( $number )
+=head2 memptr( $length )
 
 Create a L<FFI::Raw::MemPtr>. This is a shortcut for C<FFI::Raw::MemPtr-E<gt>new(...)>.
 
@@ -146,7 +159,7 @@ sub ushort ()   { ord 'Z' }
 
 =head2 FFI::Raw::long
 
-Return a C<FFI::Raw> long type.
+Return a C<FFI::Raw> long integer type.
 
 =cut
 
@@ -154,7 +167,7 @@ sub long ()   { ord 'l' }
 
 =head2 FFI::Raw::ulong
 
-Return a C<FFI::Raw> unsigned long type.
+Return a C<FFI::Raw> unsigned long integer type.
 
 =cut
 

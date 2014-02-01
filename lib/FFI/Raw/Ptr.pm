@@ -1,6 +1,6 @@
 package FFI::Raw::Ptr;
 {
-  $FFI::Raw::Ptr::VERSION = '0.25';
+  $FFI::Raw::Ptr::VERSION = '0.26';
 }
 
 use strict;
@@ -12,7 +12,7 @@ FFI::Raw::Ptr - Base FFI::Raw pointer type
 
 =head1 VERSION
 
-version 0.25
+version 0.26
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ not automatically deallocated once not in use anymore.
 =head2 new( $ptr )
 
 Create a new C<FFI::Raw::Ptr> pointing to C<$ptr>, which can be either a
-C<FFI::Raw::MemPtr> or a pointer returned by another function.
+C<FFI::Raw::MemPtr> or a pointer returned by a C function.
 
 =cut
 
