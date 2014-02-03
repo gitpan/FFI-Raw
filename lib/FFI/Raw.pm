@@ -1,6 +1,6 @@
 package FFI::Raw;
 {
-  $FFI::Raw::VERSION = '0.26';
+  $FFI::Raw::VERSION = '0.27';
 }
 
 use strict;
@@ -26,7 +26,7 @@ FFI::Raw - Perl bindings to the portable FFI library (libffi)
 
 =head1 VERSION
 
-version 0.26
+version 0.27
 
 =head1 SYNOPSIS
 

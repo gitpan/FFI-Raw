@@ -15,6 +15,9 @@
    "name" : "FFI-Raw",
    "prereqs" : {
       "configure" : {
+         "recommends" : {
+            "ExtUtils::PkgConfig" : "0"
+         },
          "requires" : {
             "Devel::CheckLib" : "0",
             "ExtUtils::MakeMaker" : "6.30"
@@ -68,7 +71,7 @@
          "web" : "https://github.com/ghedo/p5-FFI-Raw"
       }
    },
-   "version" : "0.26",
+   "version" : "0.27",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
@@ -271,6 +274,17 @@
                }
             },
             "name" : "ConfigureRequires",
+            "version" : "5.006"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::Prereqs",
+            "config" : {
+               "Dist::Zilla::Plugin::Prereqs" : {
+                  "phase" : "configure",
+                  "type" : "recommends"
+               }
+            },
+            "name" : "ConfigureRecommends",
             "version" : "5.006"
          },
          {

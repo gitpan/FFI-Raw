@@ -3,6 +3,18 @@ use Config;
 use Devel::CheckLib;
 
 my $use_system_ffi = check_lib(lib => "ffi", header => "ffi.h");
+my $pkg_config;
+
+if (!$use_system_ffi && eval { require ExtUtils::PkgConfig }) {
+  my %pkg_config = eval { ExtUtils::PkgConfig -> find('libffi') };
+
+  unless ($@) {
+    if (check_lib(header => "ffi.h", LIBS => $pkg_config{libs}, INC => $pkg_config{cflags})) {
+      $use_system_ffi = 1;
+      $pkg_config = \%pkg_config;
+    }
+  }
+}
 
 sub MY::postamble {
   if ($^O eq 'MSWin32') {
@@ -68,7 +80,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.26",
+  "VERSION" => "0.27",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -76,13 +88,16 @@ my %WriteMakefileArgs = (
 
 my @libs;
 
+$WriteMakefileArgs{CCFLAGS}   = "$Config{ccflags} $Config{cccdlflags}";
+$WriteMakefileArgs{LDDLFLAGS} = "$Config{lddlflags}";
+
 if ($^O eq 'MSWin32' && $Config{cc} =~ /cl(\.exe)?$/) {
   for (@WriteMakefileArgs{'MYEXTLIB','OBJECT'}) {
     s/libffi.a/libffi.lib/;
   }
 
-  $WriteMakefileArgs{CCFLAGS}   = "$Config{ccflags} -DFFI_BUILDING",
-  $WriteMakefileArgs{LDDLFLAGS} = "$Config{lddlflags} psapi.lib";
+  $WriteMakefileArgs{CCFLAGS}   .= " -DFFI_BUILDING",
+  $WriteMakefileArgs{LDDLFLAGS} .= " psapi.lib";
 
 } elsif ($^O =~ /^(MSWin32|cygwin)$/) {
   push @libs, '-L/usr/lib/w32api' if ($^O eq 'cygwin');
@@ -95,7 +110,14 @@ if ($^O eq 'openbsd' && !$Config{usethreads}) {
 
 if ($use_system_ffi) {
   $WriteMakefileArgs{OBJECT} = '$(O_FILES)';
-  push @libs, '-lffi';
+
+  if ($pkg_config) {
+    push @libs, $pkg_config -> {libs};
+    $WriteMakefileArgs{CCFLAGS} .= " " . $pkg_config -> {cflags};
+  } else {
+    push @libs, '-lffi';
+  }
+
   delete $WriteMakefileArgs{MYEXTLIB};
 }
 
