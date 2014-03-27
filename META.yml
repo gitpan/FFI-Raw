@@ -42,7 +42,7 @@ resources:
   bugtracker: https://github.com/ghedo/p5-FFI-Raw/issues
   homepage: http://metacpan.org/release/FFI-Raw/
   repository: git://github.com/ghedo/p5-FFI-Raw.git
-version: '0.29'
+version: '0.30'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

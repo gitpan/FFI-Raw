@@ -319,6 +319,8 @@ deps/libffi/testsuite/libffi.call/va_struct1.c
 deps/libffi/testsuite/libffi.call/va_struct2.c
 deps/libffi/testsuite/libffi.call/va_struct3.c
 deps/libffi/texinfo.tex
+deps/math_int64/perl_math_int64.c
+deps/math_int64/perl_math_int64.h
 dist.ini
 eg/getpid.pl
 eg/integer.pl
@@ -368,5 +370,3 @@ t/release-pod-syntax.t
 typemap
 xs/Callback.xs
 xs/MemPtr.xs
-xs/perl_math_int64.c
-xs/perl_math_int64.h

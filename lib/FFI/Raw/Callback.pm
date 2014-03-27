@@ -1,5 +1,5 @@
 package FFI::Raw::Callback;
-$FFI::Raw::Callback::VERSION = '0.29';
+$FFI::Raw::Callback::VERSION = '0.30';
 use strict;
 use warnings;
 
@@ -9,7 +9,7 @@ FFI::Raw::Callback - FFI::Raw function pointer type
 
 =head1 VERSION
 
-version 0.29
+version 0.30
 
 =head1 DESCRIPTION
 

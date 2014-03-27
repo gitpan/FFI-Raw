@@ -56,7 +56,7 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
-  "INC" => "-I. -Ixs -Ideps/libffi/include",
+  "INC" => "-I. -Ixs -Ideps -Ideps/libffi/include",
   "LICENSE" => "perl",
   "MYEXTLIB" => "deps/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
@@ -85,7 +85,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.29",
+  "VERSION" => "0.30",
   "test" => {
     "TESTS" => "t/*.t"
   }

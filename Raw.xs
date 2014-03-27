@@ -22,8 +22,8 @@ typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif
 
-#include "perl_math_int64.h"
-#include "perl_math_int64.c"
+#include "math_int64/perl_math_int64.h"
+#include "math_int64/perl_math_int64.c"
 
 #if defined(_WIN32) || defined(__CYGWIN__)
 # include <windows.h>
@@ -302,10 +302,14 @@ new(class, library, function, ret_type, ...)
 			if (process == NULL)
 				Perl_croak(aTHX_ "Process not found");
 
-			if (EnumProcessModules(process, mods,
-					       sizeof(mods), &needed)) {
+			if (EnumProcessModules(
+				process, mods, sizeof(mods), &needed)
+			) {
 				for (n = 0; n < (needed/sizeof(HMODULE)); n++) {
-					if (GetModuleFileNameEx(process, mods[n], mod_name, sizeof(mod_name) / sizeof(TCHAR))) {
+					if (GetModuleFileNameEx(
+						process, mods[n], mod_name,
+						sizeof(mod_name)/sizeof(TCHAR))
+					) {
 
 						ffi_raw -> handle = _ffi_raw_win32_load_library(mod_name);
 
@@ -378,7 +382,6 @@ new_from_ptr(class, function, ret_type, ...)
 	break;					\
 }
 
-
 #if defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN
 # define FFI_CALL(TYPE, FN) {			\
 	void *result;				\
@@ -390,9 +393,7 @@ new_from_ptr(class, function, ret_type, ...)
 	if (rtype -> type != FFI_TYPE_FLOAT &&	\
 	    rtype -> type != FFI_TYPE_STRUCT &&	\
 	    rtype -> size < sizeof(ffi_arg))	\
-		result = (char *) result +	\
-			 sizeof(ffi_arg) -	\
-			 rtype -> size;		\
+		result = (char *) result + sizeof(ffi_arg) - rtype -> size; \
 	output = FN(*(TYPE *) result);		\
 	Safefree(original);			\
 	break;					\
