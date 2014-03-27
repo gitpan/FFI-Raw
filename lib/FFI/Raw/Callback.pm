@@ -1,8 +1,5 @@
 package FFI::Raw::Callback;
-{
-  $FFI::Raw::Callback::VERSION = '0.28';
-}
-
+$FFI::Raw::Callback::VERSION = '0.29';
 use strict;
 use warnings;
 
@@ -12,7 +9,7 @@ FFI::Raw::Callback - FFI::Raw function pointer type
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 DESCRIPTION
 
@@ -25,6 +22,14 @@ be passed to functions taking a C<FFI::Raw::ptr> type.
 
 Create a C<FFI::Raw::Callback> using the code reference C<$coderef> as body. The
 signature (return and arguments types) must also be passed.
+
+=head1 CAVEATS
+
+For callbacks with a C<FFI::Raw::str> return type, the string value will be copied
+to a private field on the callback object.  The memory for this value will be
+freed the next time the callback is called, or when the callback itself is freed.
+For more exact control over when the return value is freed, you can instead
+use C<FFI::Raw::ptr> type and return a L<FFI::Raw::MemPtr> object.
 
 =head1 AUTHOR
 

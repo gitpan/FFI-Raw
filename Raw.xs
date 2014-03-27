@@ -58,6 +58,7 @@ typedef struct FFI_RAW_CALLBACK {
 	ffi_cif cif;
 	ffi_type *ret;
 	char ret_type;
+	void *ret_value;
 	ffi_type **args;
 	char *args_types;
 	unsigned int argc;
@@ -196,8 +197,37 @@ void _ffi_raw_cb_wrap(ffi_cif *cif, void *ret, void *args[], void *argp) {
 		case 'C': *(unsigned char *) ret = POPi; break;
 		case 'f': *(float *) ret = POPn; break;
 		case 'd': *(double *) ret = POPn; break;
-		case 's': Perl_croak(aTHX_ "Not supported");
-		case 'p': Perl_croak(aTHX_ "Not supported");
+		case 's': {
+			SV *value = POPs;
+
+			if (self -> ret_value != NULL)
+				Safefree(self -> ret_value);
+
+			if (SvOK(value))
+				*(char **) ret = savepv(SvPV_nolen(value));
+			else
+				*(char **) ret = NULL;
+
+			self -> ret_value = *(void **) ret;
+
+			break;
+		}
+		case 'p': {
+			SV *value = POPs;
+
+			if (!SvOK(value)) {
+				*(void **) ret = NULL;
+				break;
+			}
+
+			if (sv_derived_from(value, "FFI::Raw::Ptr") ||
+			    sv_derived_from(value, "FFI::Raw::Callback"))
+				value = SvRV(value);
+
+			*(void **) ret = INT_TO_PTR(value);
+
+			break;
+		}
 	}
 
 	PUTBACK;
@@ -432,22 +462,24 @@ call(self, ...)
 
 					Newx(val, 1, void *);
 
-					if (sv_derived_from(
-						arg, "FFI::Raw::Ptr"
-					)) {
-						arg = SvRV(arg);
-					}
-
-					if (sv_derived_from(
-						arg, "FFI::Raw::Callback"
-					)) {
-						FFI_Raw_Callback_t *cb =
-							INT_TO_PTR(SvRV(arg));
-						*val = cb -> fn;
-					} else if (SvOK(arg))
-						*val = INT_TO_PTR(arg);
-					else
+					if (!SvOK(arg))
 						*val = NULL;
+					else {
+						if (sv_derived_from(
+							arg, "FFI::Raw::Ptr"
+						)) {
+							arg = SvRV(arg);
+						}
+
+						if (sv_derived_from(
+							arg, "FFI::Raw::Callback"
+						)) {
+							FFI_Raw_Callback_t *cb =
+								INT_TO_PTR(SvRV(arg));
+							*val = cb -> fn;
+						} else
+							*val = INT_TO_PTR(arg);
+					}
 
 					values[i] = val;
 					break;

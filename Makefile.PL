@@ -25,7 +25,7 @@ sub MY::postamble {
 
   return <<'MAKE_LIBFFI';
 $(MYEXTLIB):
-	cd xs/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
+	cd deps/libffi && ./configure MAKEINFO=true --disable-builddir --with-pic && $(MAKE)
 
 .NOTPARALLEL:
 
@@ -56,11 +56,11 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "FFI-Raw",
   "EXE_FILES" => [],
-  "INC" => "-I. -Ixs -Ixs/libffi/include",
+  "INC" => "-I. -Ixs -Ideps/libffi/include",
   "LICENSE" => "perl",
-  "MYEXTLIB" => "xs/libffi/.libs/libffi.a",
+  "MYEXTLIB" => "deps/libffi/.libs/libffi.a",
   "NAME" => "FFI::Raw",
-  "OBJECT" => "\$(O_FILES) xs/libffi/.libs/libffi.a",
+  "OBJECT" => "\$(O_FILES) deps/libffi/.libs/libffi.a",
   "PREREQ_PM" => {
     "XSLoader" => 0,
     "overload" => 0,
@@ -85,7 +85,7 @@ my %WriteMakefileArgs = (
     "bigint" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.28",
+  "VERSION" => "0.29",
   "test" => {
     "TESTS" => "t/*.t"
   }

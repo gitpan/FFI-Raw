@@ -1,8 +1,5 @@
 package FFI::Raw::MemPtr;
-{
-  $FFI::Raw::MemPtr::VERSION = '0.28';
-}
-
+$FFI::Raw::MemPtr::VERSION = '0.29';
 use strict;
 use warnings;
 
@@ -12,7 +9,7 @@ FFI::Raw::MemPtr - FFI::Raw memory pointer type
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 DESCRIPTION
 
