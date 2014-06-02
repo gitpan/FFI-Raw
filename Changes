@@ -1,5 +1,12 @@
 Revision history for FFI-Raw
 
+0.32      2014-06-02 15:11:41+02:00 Europe/Rome
+
+ - Fix memory leak in Callback objects (GH#46) (thanks, @plicease!)
+ - Use PkgConfig when building, if it's available (GH#48) (thanks, @plicease!)
+ - Do not require Alien::MSYS if system libffi is available
+   (GH#47) (GH#49) (thanks, @plicease!)
+
 0.31      2014-04-30 10:23:28+02:00 Europe/Rome
 
  - Re-upload to CPAN (was deleted by accident -.-")

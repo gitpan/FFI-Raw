@@ -1,5 +1,5 @@
 package FFI::Raw::Ptr;
-$FFI::Raw::Ptr::VERSION = '0.31';
+$FFI::Raw::Ptr::VERSION = '0.32';
 use strict;
 use warnings;
 
@@ -9,7 +9,7 @@ FFI::Raw::Ptr - Base FFI::Raw pointer type
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
